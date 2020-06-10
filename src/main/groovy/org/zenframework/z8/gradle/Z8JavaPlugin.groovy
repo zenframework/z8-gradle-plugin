@@ -7,7 +7,7 @@ class Z8JavaPlugin implements Plugin<Project> {
 
 	void apply(Project project) {
 		if (!project.hasProperty('z8Version'))
-			project.ext.z8Version = Z8BlBasePlugin.Z8_DEFAULT_VERSION
+			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
 
 		project.pluginManager.apply(org.gradle.api.plugins.JavaPlugin.class);
 

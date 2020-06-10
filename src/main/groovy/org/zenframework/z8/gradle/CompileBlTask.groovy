@@ -2,7 +2,9 @@ package org.zenframework.z8.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
@@ -12,40 +14,37 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.zenframework.z8.compiler.cmd.Main
 
-class CompileBlTask extends DefaultTask {
+class CompileBlTask extends ArtifactDependentTask {
 
-	@InputDirectory DirectoryProperty source = project.objects.directoryProperty().fileValue(project.file("${project.projectDir}"))
-	@OutputDirectory DirectoryProperty output = project.objects.directoryProperty().fileValue(project.file("${project.projectDir}/.java"))
+	@OutputDirectory private DirectoryProperty output = project.objects.directoryProperty()
 
-	@Optional @InputDirectory DirectoryProperty docsTemplates = project.objects.directoryProperty()
-	@Optional @OutputDirectory DirectoryProperty docsOutput = project.objects.directoryProperty()
+	@Optional @InputDirectory private DirectoryProperty docsTemplates = project.objects.directoryProperty()
+	@Optional @OutputDirectory private DirectoryProperty docsOutput = project.objects.directoryProperty()
 
-	@Optional @Input ConfigurableFileCollection requires = project.objects.fileCollection()
+	File getOutput() {
+		output.asFile.getOrNull()
+	}
 
-	File getSource() {
-		source.asFile.getOrNull()
+	void setOutput(Object output) {
+		this.output.set(project.file(output))
 	}
 
 	File getDocsTemplates() {
 		docsTemplates.asFile.getOrNull()
 	}
 
-	File getOutput() {
-		output.asFile.getOrNull()
-	}
-
 	File getDocsOutput() {
 		docsOutput.asFile.getOrNull()
 	}
 
-	FileCollection getRequires() {
-		requires.asFileTree
-	}
-
 	@Override
 	public Task configure(Closure closure) {
-		requires.setFrom(project.configurations.bl)
-		return super.configure(closure);
+		if (getSource() == null)
+			setSource(project.projectDir)
+		if (getOutput() == null)
+			setOutput("${project.projectDir}/.java")
+		requires project.configurations.blcompile
+		super.configure(closure);
 	}
 
 	@TaskAction
@@ -63,10 +62,6 @@ class CompileBlTask extends DefaultTask {
 				(docsOutput != null ? "BL Docs Templates: ${docsOutput}" : '')
 
 		Main.compile(project.name, source, requires.toArray(new String[0]), output, docsOutput, docsTemplates);
-	}
-
-	static String getPath(File file) {
-		return file != null ? file.path : null
 	}
 
 }

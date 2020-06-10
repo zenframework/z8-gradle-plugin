@@ -3,7 +3,7 @@ package org.zenframework.z8.gradle
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.JavaExec
@@ -36,7 +36,7 @@ class CompileBlForkedTask extends JavaExec {
 		docsOutput.asFile.getOrNull()
 	}
 
-	FileCollection getRequires() {
+	FileTree getRequires() {
 		requires.asFileTree
 	}
 
@@ -48,10 +48,6 @@ class CompileBlForkedTask extends JavaExec {
 		main = 'org.zenframework.z8.compiler.cmd.Main'
 
 		super.configure(closure);
-	}
-
-	static String getPath(File file) {
-		return file != null ? file.path : null
 	}
 
 	@Override
@@ -70,6 +66,10 @@ class CompileBlForkedTask extends JavaExec {
 
 		args = [ source, "-projectName:${project.name}", "-output:${output}", "-requires:${requires.join(';')}" ] + args
 		super.exec();
+	}
+
+	private static String getPath(File file) {
+		return file != null ? file.path : null
 	}
 
 }

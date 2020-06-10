@@ -6,11 +6,9 @@ import org.gradle.api.attributes.LibraryElements
 
 class Z8BlBasePlugin implements Plugin<Project> {
 
-	static final Z8_DEFAULT_VERSION = '1.3.0'
-
 	void apply(Project project) {
 		if (!project.hasProperty('z8Version'))
-			project.ext.z8Version = Z8_DEFAULT_VERSION
+			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
 
 		project.configurations {
 			compiler
