@@ -1,6 +1,7 @@
 plugins {
 	id 'groovy-gradle-plugin'
 	id 'maven-publish'
+	id 'eclipse'
 }
 
 repositories {
@@ -38,6 +39,22 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 buildDir = './target'
+
+sourceSets.main.java.outputDir = file("${buildDir}/classes/main")
+sourceSets.main.output.resourcesDir = file("${buildDir}/classes/main")
+
+eclipse {
+	// Eclipse: default java output -> $buildDir/classes/default
+	classpath.defaultOutputDir = new File(buildDir, 'classes/main')
+	// Eclipse: java source folders output -> ${buildDir}/classes/...
+	classpath.file.whenMerged {
+		entries.findAll { entry ->
+			entry instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder
+		}.each { entry ->
+			entry.output = entry.output.replace('bin/', relativePath("${buildDir}/classes/"))
+		}
+	}
+}
 
 publishing {
 	repositories {
