@@ -14,6 +14,7 @@ class ArtifactDependentTask extends DefaultTask {
 
 	@InputDirectory private DirectoryProperty source = project.objects.directoryProperty()
 	@Optional @Input private ConfigurableFileCollection requires = project.objects.fileCollection()
+	@Optional @Input private List<String> requiresInclude = []
 
 	File getSource() {
 		source.asFile.getOrNull()
@@ -27,14 +28,22 @@ class ArtifactDependentTask extends DefaultTask {
 		requires.asFileTree
 	}
 
-	ConfigurableFileTree extractRequires() {
+	List<String> getRequiresInclude() {
+		return requiresInclude
+	}
+
+	FileTree extractRequires() {
 		requires.inject(project.files()) { tree, zip ->
-			tree.plus(zipTree(zip))
-		}
+			tree.plus(project.zipTree(zip))
+		}.asFileTree
 	}
 
 	void requires(FileCollection requires) {
 		this.requires.setFrom(requires)
+	}
+
+	void requiresInclude(Object include) {
+		requiresInclude << include.toString()
 	}
 
 	static protected String getPath(File file) {

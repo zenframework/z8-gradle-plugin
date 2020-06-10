@@ -1,7 +1,8 @@
 package org.zenframework.z8.gradle
 
 import org.gradle.api.Plugin
-import org.gradle.api.Project;
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 
 class Z8JavaPlugin implements Plugin<Project> {
 
@@ -9,7 +10,7 @@ class Z8JavaPlugin implements Plugin<Project> {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
 
-		project.pluginManager.apply(org.gradle.api.plugins.JavaPlugin.class);
+		project.pluginManager.apply(JavaPlugin.class)
 
 		project.sourceSets {
 			main {

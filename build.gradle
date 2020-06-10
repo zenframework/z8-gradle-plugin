@@ -29,6 +29,18 @@ gradlePlugin {
 			id = 'z8-bl'
 			implementationClass = 'org.zenframework.z8.gradle.Z8BlPlugin'
 		}
+		z8JsBasePlugin {
+			id = 'z8-js-base'
+			implementationClass = 'org.zenframework.z8.gradle.Z8JsBasePlugin'
+		}
+		z8JsPlugin {
+			id = 'z8-js'
+			implementationClass = 'org.zenframework.z8.gradle.Z8JsPlugin'
+		}
+		z8AppPlugin {
+			id = 'z8-app'
+			implementationClass = 'org.zenframework.z8.gradle.Z8AppPlugin'
+		}
 	}
 }
 
