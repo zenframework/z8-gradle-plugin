@@ -15,6 +15,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.pluginManager.apply(ApplicationPlugin.class);
 
 		project.configurations {
+			boot
 			resources {
 				canBeResolved = true
 				canBeConsumed = false
@@ -24,6 +25,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
+			boot "org.zenframework.z8:org.zenframework.z8.boot:${project.z8Version}"
 			resources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
 		}
 
@@ -65,10 +67,12 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('assembleWeb', Copy) {
 			group 'Build'
 			description 'Assemble WEB resources'
-			dependsOn project.tasks.prepareWeb, project.tasks.prepareDebug
+			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.prepareWeb, project.tasks.prepareDebug
 		}
 
 		project.tasks.assemble.dependsOn project.tasks.assembleWeb
+		project.tasks.distZip.dependsOn project.tasks.assembleWeb
+		project.tasks.distTar.dependsOn project.tasks.assembleWeb
 
 		project.pluginManager.withPlugin('eclipse') {
 			project.eclipse {
