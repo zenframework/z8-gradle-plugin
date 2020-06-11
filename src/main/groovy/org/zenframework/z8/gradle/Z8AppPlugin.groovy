@@ -2,6 +2,8 @@ package org.zenframework.z8.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencySubstitution
+import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.Copy
@@ -21,6 +23,20 @@ class Z8AppPlugin implements Plugin<Project> {
 				canBeConsumed = false
 				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
 						project.objects.named(LibraryElements, 'web'))
+			}
+		}
+
+		project.allprojects {
+			configurations.all {
+				resolutionStrategy.dependencySubstitution.all { DependencySubstitution dependency ->
+					if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.group == project.group) {
+						def targetProject = findProject(":${dependency.requested.module}")
+						if (targetProject != null) {
+							println ">>>>>>>>>>>>> Substitute ${dependency.requested.displayName} by ${targetProject}"
+							dependency.useTarget targetProject
+						}
+					}
+				}
 			}
 		}
 
