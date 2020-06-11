@@ -71,6 +71,15 @@ eclipse {
 publishing {
 	repositories {
 		mavenLocal()
+		if (project.hasProperty('mavenPublishRemote') && mavenPublishRemote) {
+			maven {
+				url = "sftp://revoltsoft.ru:22/opt/mvn"
+				credentials {
+					username revoltUser
+					password revoltPassword
+				}
+			}
+		}
 	}
 	publications {
 		maven(MavenPublication) {
