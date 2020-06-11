@@ -73,6 +73,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.assemble.dependsOn project.tasks.assembleWeb
 		project.tasks.distZip.dependsOn project.tasks.assembleWeb
 		project.tasks.distTar.dependsOn project.tasks.assembleWeb
+		project.tasks.installDist.dependsOn project.tasks.assembleWeb
 
 		project.pluginManager.withPlugin('eclipse') {
 			project.eclipse {
