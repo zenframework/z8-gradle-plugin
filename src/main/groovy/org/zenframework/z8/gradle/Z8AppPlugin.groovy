@@ -32,7 +32,7 @@ class Z8AppPlugin implements Plugin<Project> {
 					if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.group == project.group) {
 						def targetProject = findProject(":${dependency.requested.module}")
 						if (targetProject != null) {
-							println ">>>>>>>>>>>>> Substitute ${dependency.requested.displayName} by ${targetProject}"
+							println "Z8 App [${project.name}]: substitute ${dependency.requested.displayName} by ${targetProject}"
 							dependency.useTarget targetProject
 						}
 					}
