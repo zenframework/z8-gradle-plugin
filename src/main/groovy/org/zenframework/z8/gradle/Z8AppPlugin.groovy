@@ -50,20 +50,28 @@ class Z8AppPlugin implements Plugin<Project> {
 
 			if (project.hasProperty('z8Home'))
 				dependsOn project.gradle.includedBuild(project.file(project.z8Home).name).task(':org.zenframework.z8.resources:assembleZip')
+
 			from (project.configurations.resources.inject(project.files()) { tree, zip ->
 				tree.plus(project.zipTree(zip))
 			}) {
+				include 'bin/**/*'
+				include 'conf/**/*'
 				include 'web/css/**'
 				include 'web/WEB-INF/fonts/**'
 				include 'web/WEB-INF/reports/**'
 				include 'web/WEB-INF/resources/**'
+				filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
+					expand project: project.rootProject
+				}
 			}
+
 			from('src') {
 				include 'web/**/*'
 				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
 					expand project: project
 				}
 			}
+
 			into project.buildDir
 		}
 
