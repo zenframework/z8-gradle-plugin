@@ -13,6 +13,8 @@ class Z8AppPlugin implements Plugin<Project> {
 	void apply(Project project) {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
+		if (!project.hasProperty('srcMainDir'))
+			project.extensions.srcMainDir = project.file("${project.projectDir}/src/main")
 
 		project.pluginManager.apply(ApplicationPlugin.class);
 
@@ -65,7 +67,7 @@ class Z8AppPlugin implements Plugin<Project> {
 				}
 			}
 
-			from('src/main') {
+			from(project.srcMainDir) {
 				include 'web/**/*'
 				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
 					expand project: project
@@ -82,7 +84,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			from ("${project.buildDir}/web") {
 				include 'css/fonts/**'
 			}
-			from('src/web') {
+			from("${project.srcMainDir}/web") {
 				include 'index.html'
 			}
 			into "${project.buildDir}/web/debug"

@@ -12,7 +12,9 @@ class Z8JsBasePlugin implements Plugin<Project> {
 	void apply(Project project) {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
-
+		if (!project.hasProperty('srcMainDir'))
+			project.extensions.srcMainDir = project.file("${project.projectDir}/src/main")
+	
 		project.configurations {
 			webtools
 			webcompile {
@@ -38,7 +40,7 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			group 'build'
 			description 'Concat CSS files'
 			requires project.configurations.webcompile
-			source = project.file("${project.projectDir}/src/main/css")
+			source = project.file("${project.srcMainDir}/css")
 			output = project.file("${project.buildDir}/web/debug/css/${project.rootProject.name}.css")
 		}
 
@@ -56,7 +58,7 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			group 'build'
 			description 'Concat JS files'
 			requires project.configurations.webcompile
-			source = project.file("${project.projectDir}/src/main/js")
+			source = project.file("${project.srcMainDir}/js")
 			output = project.file("${project.buildDir}/web/debug/${project.rootProject.name}.js")
 		}
 
