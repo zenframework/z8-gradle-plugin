@@ -24,7 +24,7 @@ class ConcatTask extends ArtifactDependentTask {
 			include requiresInclude
 		}.plus(project.file("${source}/.buildorder").readLines().findAll { !it.trim().isEmpty() }
 				.collect { project.file("${source}/${it}") })
-		src.each { println "DEBUG Concat: ${it}" }
+		src.each { println "Concat: ${it}" }
 		def dest = output.asFile.get()
 		dest.parentFile.mkdirs()
 		dest.newWriter(ENCODING).withWriter { w ->

@@ -20,9 +20,7 @@ class Z8JavaPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.tasks.jar {
-			duplicatesStrategy = 'exclude'
-		}
+		project.tasks.jar.duplicatesStrategy = 'exclude'
 
 		project.pluginManager.withPlugin('eclipse') {
 			project.eclipse {

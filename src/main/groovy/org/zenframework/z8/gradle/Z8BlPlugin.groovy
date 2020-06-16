@@ -3,6 +3,7 @@ package org.zenframework.z8.gradle
 import org.gradle.api.Project;
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.assembler.tasks.Assemble
+import org.gradle.language.jvm.tasks.ProcessResources
 
 class Z8BlPlugin extends Z8BlBasePlugin {
 
@@ -22,6 +23,10 @@ class Z8BlPlugin extends Z8BlBasePlugin {
 			dependsOn project.tasks.compileBl
 		}
 
+		project.tasks.withType(ProcessResources) {
+			dependsOn project.tasks.compileBl
+		}
+
 		project.tasks.assemble {
 			dependsOn project.tasks.blzip
 		}
@@ -34,8 +39,6 @@ class Z8BlPlugin extends Z8BlBasePlugin {
 			java.srcDir project.tasks.compileBl.output
 			resources.srcDir project.tasks.compileBl.output
 		}
-
-		project.tasks.jar.duplicatesStrategy = 'exclude'
 
 		project.pluginManager.withPlugin('eclipse') {
 			project.eclipse.classpath.file.whenMerged {

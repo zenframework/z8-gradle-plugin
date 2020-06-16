@@ -91,7 +91,11 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('assembleWeb', Copy) {
 			group 'Build'
 			description 'Assemble WEB resources'
-			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.prepareWeb, project.tasks.prepareDebug
+			dependsOn project.tasks.prepareWeb, project.tasks.prepareDebug
+		}
+
+		project.pluginManager.withPlugin('z8-js') {
+			project.tasks.assembleWeb.dependsOn project.tasks.minifyCss, project.tasks.minifyJs
 		}
 
 		project.tasks.assemble.dependsOn project.tasks.assembleWeb
