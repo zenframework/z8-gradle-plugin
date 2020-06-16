@@ -1,4 +1,4 @@
-package org.zenframework.z8.gradle
+package org.zenframework.z8.gradle.bl
 
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction

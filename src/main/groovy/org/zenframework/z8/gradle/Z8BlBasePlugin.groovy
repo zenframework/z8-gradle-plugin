@@ -3,6 +3,8 @@ package org.zenframework.z8.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
+import org.zenframework.z8.gradle.bl.BlzipTask
+import org.zenframework.z8.gradle.bl.CompileBlForkedTask
 
 class Z8BlBasePlugin implements Plugin<Project> {
 

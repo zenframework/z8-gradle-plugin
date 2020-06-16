@@ -65,7 +65,7 @@ class Z8AppPlugin implements Plugin<Project> {
 				}
 			}
 
-			from('src') {
+			from('src/main') {
 				include 'web/**/*'
 				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
 					expand project: project
@@ -88,14 +88,14 @@ class Z8AppPlugin implements Plugin<Project> {
 			into "${project.buildDir}/web/debug"
 		}
 
-		project.tasks.register('assembleWeb', Copy) {
+		project.tasks.register('assembleWeb') {
 			group 'Build'
 			description 'Assemble WEB resources'
 			dependsOn project.tasks.prepareWeb, project.tasks.prepareDebug
 		}
 
 		project.pluginManager.withPlugin('z8-js') {
-			project.tasks.assembleWeb.dependsOn project.tasks.minifyCss, project.tasks.minifyJs
+			project.tasks.assembleWeb.dependsOn project.tasks.assembleJs
 		}
 
 		project.tasks.assemble.dependsOn project.tasks.assembleWeb

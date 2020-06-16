@@ -1,4 +1,4 @@
-package org.zenframework.z8.gradle
+package org.zenframework.z8.gradle.bl
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
@@ -13,29 +13,15 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.zenframework.z8.compiler.cmd.Main
+import org.zenframework.z8.gradle.base.ArtifactDependentTask
 
 class CompileBlTask extends ArtifactDependentTask {
 
-	@OutputDirectory private DirectoryProperty output = project.objects.directoryProperty()
+	@InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
+	@OutputDirectory final DirectoryProperty output = project.objects.directoryProperty()
 
-	@Optional @InputDirectory private DirectoryProperty docsTemplates = project.objects.directoryProperty()
-	@Optional @OutputDirectory private DirectoryProperty docsOutput = project.objects.directoryProperty()
-
-	File getOutput() {
-		output.asFile.getOrNull()
-	}
-
-	void setOutput(Object output) {
-		this.output.set(project.file(output))
-	}
-
-	File getDocsTemplates() {
-		docsTemplates.asFile.getOrNull()
-	}
-
-	File getDocsOutput() {
-		docsOutput.asFile.getOrNull()
-	}
+	@Optional @InputDirectory final DirectoryProperty docsTemplates = project.objects.directoryProperty()
+	@Optional @OutputDirectory final DirectoryProperty docsOutput = project.objects.directoryProperty()
 
 	@Override
 	public Task configure(Closure closure) {
@@ -49,11 +35,11 @@ class CompileBlTask extends ArtifactDependentTask {
 
 	@TaskAction
 	def run() {
-		def source = getPath(getSource())
-		def output = getPath(getOutput())
-		def requires = getRequires().collect() { it.path }
-		def docsTemplates = getPath(getDocsTemplates())
-		def docsOutput = getPath(getDocsOutput())
+		def source = Z8GradleUtil.getPath(source)
+		def output = Z8GradleUtil.getPath(output)
+		def requires = requires.asFileTree.collect() { it.path }
+		def docsTemplates = Z8GradleUtil.getPath(docsTemplates)
+		def docsOutput = Z8GradleUtil.getPath(docsOutput)
 
 		println "BL Source:   ${source}" +
 				"\nBL Output:   ${output}" +
