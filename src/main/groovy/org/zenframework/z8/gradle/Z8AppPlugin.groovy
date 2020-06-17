@@ -63,7 +63,7 @@ class Z8AppPlugin implements Plugin<Project> {
 				include 'web/WEB-INF/reports/**'
 				include 'web/WEB-INF/resources/**'
 				filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
-					expand project: project.rootProject
+					expand project: project
 				}
 			}
 
