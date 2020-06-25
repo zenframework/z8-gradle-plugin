@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.zenframework.z8.gradle.js.ConcatTask
+import org.zenframework.z8.gradle.js.JszipTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
 
@@ -75,6 +76,10 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			dependsOn project.tasks.minifyCss, project.tasks.minifyJs
 		}
 
+		project.tasks.register('jszip', JszipTask) {
+			group = 'build'
+			description = "Assemble JS/CSS archive ${archiveName} into ${project.relativePath(destinationDir)}"
+		}
 	}
 
 }

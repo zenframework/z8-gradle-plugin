@@ -3,6 +3,7 @@ package org.zenframework.z8.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.publish.maven.MavenPublication
 
 class Z8JavaPlugin implements Plugin<Project> {
 
@@ -33,6 +34,15 @@ class Z8JavaPlugin implements Plugin<Project> {
 					}.each { entry ->
 						entry.output = entry.output.replace('bin/', project.relativePath("${project.buildDir}/classes/"))
 					}
+				}
+			}
+		}
+
+		project.pluginManager.withPlugin('maven-publish') {
+			project.publishing {
+				repositories { mavenLocal() }
+				publications {
+					maven(MavenPublication) { from project.components.java }
 				}
 			}
 		}

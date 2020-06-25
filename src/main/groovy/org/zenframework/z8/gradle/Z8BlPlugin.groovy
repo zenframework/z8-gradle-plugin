@@ -1,6 +1,7 @@
 package org.zenframework.z8.gradle
 
 import org.gradle.api.Project;
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.jvm.tasks.ProcessResources
 
@@ -43,6 +44,15 @@ class Z8BlPlugin extends Z8BlBasePlugin {
 			project.eclipse.classpath.file.whenMerged {
 				if (!project.hasProperty('z8Home'))
 					entries += new org.gradle.plugins.ide.eclipse.model.ProjectDependency('/org.zenframework.z8.lang')
+			}
+		}
+
+		project.pluginManager.withPlugin('maven-publish') {
+			project.publishing {
+				repositories { mavenLocal() }
+				publications {
+					mavenBl(MavenPublication) { artifact source: project.tasks.blzip, extension: 'zip' }
+				}
 			}
 		}
 	}

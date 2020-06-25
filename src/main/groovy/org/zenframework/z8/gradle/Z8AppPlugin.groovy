@@ -14,9 +14,10 @@ class Z8AppPlugin implements Plugin<Project> {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
 		if (!project.hasProperty('srcMainDir'))
-			project.extensions.srcMainDir = project.file("${project.projectDir}/src/main")
+			project.ext.srcMainDir = project.file("${project.projectDir}/src/main")
 
 		project.pluginManager.apply(ApplicationPlugin.class);
+		project.pluginManager.apply(Z8JavaPlugin.class);
 
 		project.configurations {
 			boot
@@ -46,6 +47,8 @@ class Z8AppPlugin implements Plugin<Project> {
 			boot "org.zenframework.z8:org.zenframework.z8.boot:${project.z8Version}"
 			resources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
 		}
+
+		project.sourceSets.main.resources.srcDirs "${project.srcMainDir}/resources"
 
 		project.tasks.register('prepareWeb', Copy) {
 			description 'Prepare WEB resources'
