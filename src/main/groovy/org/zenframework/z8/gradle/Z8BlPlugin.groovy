@@ -7,6 +7,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 
 class Z8BlPlugin extends Z8BlBasePlugin {
 
+	@Override
 	void apply(Project project) {
 		super.apply(project);
 

@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Copy
 
 class Z8AppPlugin implements Plugin<Project> {
 
+	@Override
 	void apply(Project project) {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION

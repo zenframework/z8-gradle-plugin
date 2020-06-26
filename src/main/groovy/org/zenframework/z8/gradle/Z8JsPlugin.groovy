@@ -5,6 +5,7 @@ import org.gradle.api.publish.maven.MavenPublication
 
 class Z8JsPlugin extends Z8JsBasePlugin{
 
+	@Override
 	void apply(Project project) {
 		super.apply(project)
 

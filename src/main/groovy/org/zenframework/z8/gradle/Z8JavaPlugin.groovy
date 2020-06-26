@@ -7,6 +7,7 @@ import org.gradle.api.publish.maven.MavenPublication
 
 class Z8JavaPlugin implements Plugin<Project> {
 
+	@Override
 	void apply(Project project) {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
@@ -32,7 +33,7 @@ class Z8JavaPlugin implements Plugin<Project> {
 					entries.findAll { entry ->
 						entry instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder
 					}.each { entry ->
-						entry.output = entry.output.replace('bin/', project.relativePath("${project.buildDir}/classes/"))
+						entry.output = entry.output.replace('bin/', project.relativePath("${project.buildDir}/classes/") + '/')
 					}
 				}
 			}
