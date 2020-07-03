@@ -22,9 +22,10 @@ class ConcatTask extends ArtifactDependentTask {
 			return
 		}
 		project.logger.info "Concat from ${source.path}..."
-		def src = extractRequires().matching {
-			if (!requiresInclude.isEmpty())
-				include requiresInclude
+		
+		def extractedRequires = extractRequires();
+		def src = requiresInclude.collect { requirement ->
+			extractedRequires.matching { include requirement }.singleFile
 		}.plus(project.file("${source.path}/.buildorder").readLines().findAll {
 			def path = it.trim()
 			!path.isEmpty() && !path.startsWith('#')

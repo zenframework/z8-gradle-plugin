@@ -36,6 +36,10 @@ class Z8AppPlugin implements Plugin<Project> {
 			description 'Prepare WEB resources'
 
 			requires project.configurations.webresources
+			requiresInclude 'bin/**/*', 'conf/**/*', 'web/css/**'
+			requiresInclude 'web/WEB-INF/fonts/**'
+			requiresInclude 'web/WEB-INF/reports/**'
+			requiresInclude 'web/WEB-INF/resources/**'
 
 			doLast {
 				project.copy {
@@ -48,16 +52,12 @@ class Z8AppPlugin implements Plugin<Project> {
 						}
 					}
 
-					from (extractRequires()) {
-						include requiresInclude
-						include 'bin/**/*'
-						include 'conf/**/*'
-						include 'web/css/**'
-						include 'web/WEB-INF/fonts/**'
-						include 'web/WEB-INF/reports/**'
-						include 'web/WEB-INF/resources/**'
-						filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
-							expand project: project.rootProject
+					if (!requiresInclude.isEmpty()) {
+						from (extractRequires()) {
+							include requiresInclude
+							filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
+								expand project: project.rootProject
+							}
 						}
 					}
 				}
@@ -69,7 +69,8 @@ class Z8AppPlugin implements Plugin<Project> {
 			dependsOn project.tasks.prepareWeb
 		
 			from ("${project.buildDir}/web") {
-				include 'css/fonts/**'
+				include 'css/**/*'
+				exclude '**/*.css'
 			}
 			from("${project.srcMainDir}/web") {
 				include 'index.html'

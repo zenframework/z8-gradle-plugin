@@ -77,13 +77,14 @@ class Z8JsBasePlugin implements Plugin<Project> {
 
 			doLast {
 				project.copy {
-					into project.buildDir
-
+					into "${project.buildDir}/web/css"
 					from ("${project.srcMainDir}/css") {
-						exclude '.*', '**/*.css'
+						exclude '.buildorder', '**/*.css'
 					}
-
-					if (!requiresInclude.isEmpty()) {
+				}
+				if (!requiresInclude.isEmpty()) {
+					project.copy {
+						into project.buildDir
 						from (extractRequires()) {
 							include requiresInclude
 						}
