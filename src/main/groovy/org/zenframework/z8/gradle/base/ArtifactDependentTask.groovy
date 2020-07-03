@@ -11,7 +11,8 @@ class ArtifactDependentTask extends DefaultTask {
 
 	@Optional @Input final ConfigurableFileCollection requires = project.objects.fileCollection()
 	@Optional @Input protected final List<String> requiresInclude = []
-
+	@Optional @Input protected final Map<String, String> renames = [:]
+	
 	FileTree extractRequires() {
 		requires.inject(project.files()) { tree, zip ->
 			project.logger.info "Requires: ${zip}"
@@ -27,4 +28,7 @@ class ArtifactDependentTask extends DefaultTask {
 		include.each { requiresInclude << it.toString() }
 	}
 
+	void rename(String source, String target) {
+		renames[source] = target
+	}
 }

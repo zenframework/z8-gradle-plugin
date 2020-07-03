@@ -60,6 +60,10 @@ class Z8AppPlugin implements Plugin<Project> {
 							}
 						}
 					}
+
+					renames.each { k, v ->
+						rename k, v
+					}
 				}
 			}
 		}
