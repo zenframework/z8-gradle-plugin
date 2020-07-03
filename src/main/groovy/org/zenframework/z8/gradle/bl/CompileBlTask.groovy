@@ -41,7 +41,7 @@ class CompileBlTask extends ArtifactDependentTask {
 		def docsTemplates = Z8GradleUtil.getPath(docsTemplates)
 		def docsOutput = Z8GradleUtil.getPath(docsOutput)
 
-		println "BL Source:   ${source}" +
+		project.logger.info "BL Source:   ${source}" +
 				"\nBL Output:   ${output}" +
 				"\nBL Requires: ${requires.join('\n             ')}" +
 				(docsTemplates != null ? "\nBL Docs Templates: ${docsTemplates}" : '') +

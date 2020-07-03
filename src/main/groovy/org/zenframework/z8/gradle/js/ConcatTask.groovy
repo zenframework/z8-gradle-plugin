@@ -6,7 +6,6 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.zenframework.z8.gradle.base.ArtifactDependentTask
-import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class ConcatTask extends ArtifactDependentTask {
 
@@ -17,11 +16,21 @@ class ConcatTask extends ArtifactDependentTask {
 
 	@TaskAction
 	def run() {
+		File source = this.source.asFile.getOrNull()
+		if (source == null || !source.exists()) {
+			project.logger.info "Source ${this.source.asFile} doesn't exist. Skipping"
+			return
+		}
+		project.logger.info "Concat from ${source.path}..."
 		def src = extractRequires().matching {
 			include requiresInclude
-		}.plus(project.file("${Z8GradleUtil.getPath(source)}/.buildorder").readLines().findAll { !it.trim().isEmpty() }
-				.collect { project.file("${Z8GradleUtil.getPath(source)}/${it}") })
-		src.each { println "Concat: ${it}" }
+		}.plus(project.file("${source.path}/.buildorder").readLines().findAll {
+			def path = it.trim()
+			!path.isEmpty() && !path.startsWith('#')
+		}.collect {
+			project.file("${source.path}/${it}")
+		})
+		src.each { project.logger.info "Concat: ${it}" }
 		def dest = output.asFile.get()
 		dest.parentFile.mkdirs()
 		dest.newWriter(ENCODING).withWriter { w ->

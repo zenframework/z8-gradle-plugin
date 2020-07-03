@@ -9,9 +9,7 @@ class Z8JavaPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		if (!project.hasProperty('z8Version'))
-			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
-
+		project.pluginManager.apply(Z8BasePlugin.class)
 		project.pluginManager.apply(JavaPlugin.class)
 
 		project.sourceSets {

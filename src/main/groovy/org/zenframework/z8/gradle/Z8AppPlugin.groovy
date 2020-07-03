@@ -2,27 +2,22 @@ package org.zenframework.z8.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.DependencySubstitution
-import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.Copy
+import org.zenframework.z8.gradle.base.ArtifactDependentTask
 
 class Z8AppPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		if (!project.hasProperty('z8Version'))
-			project.ext.z8Version = Z8Constants.Z8_DEFAULT_VERSION
-		if (!project.hasProperty('srcMainDir'))
-			project.ext.srcMainDir = project.file("${project.projectDir}/src/main")
-
-		project.pluginManager.apply(ApplicationPlugin.class);
-		project.pluginManager.apply(Z8JavaPlugin.class);
+		project.pluginManager.apply(ApplicationPlugin.class)
+		project.pluginManager.apply(Z8BasePlugin.class)
+		project.pluginManager.apply(Z8JavaPlugin.class)
 
 		project.configurations {
 			boot
-			resources {
+			webresources {
 				canBeResolved = true
 				canBeConsumed = false
 				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
@@ -30,55 +25,43 @@ class Z8AppPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.allprojects {
-			configurations.all {
-				resolutionStrategy.dependencySubstitution.all { DependencySubstitution dependency ->
-					if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.group == project.group) {
-						def targetProject = findProject(":${dependency.requested.module}")
-						if (targetProject != null) {
-							println "Z8 App [${project.name}]: substitute ${dependency.requested.displayName} by ${targetProject}"
-							dependency.useTarget targetProject
-						}
-					}
-				}
-			}
-		}
-
 		project.dependencies {
 			boot "org.zenframework.z8:org.zenframework.z8.boot:${project.z8Version}"
-			resources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
+			webresources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
 		}
 
 		project.sourceSets.main.resources.srcDirs "${project.srcMainDir}/resources"
 
-		project.tasks.register('prepareWeb', Copy) {
+		project.tasks.register('prepareWeb', ArtifactDependentTask) {
 			description 'Prepare WEB resources'
 
-			if (project.hasProperty('z8Home'))
-				dependsOn project.gradle.includedBuild(project.file(project.z8Home).name).task(':org.zenframework.z8.resources:assembleZip')
+			requires project.configurations.webresources
 
-			from (project.configurations.resources.inject(project.files()) { tree, zip ->
-				tree.plus(project.zipTree(zip))
-			}) {
-				include 'bin/**/*'
-				include 'conf/**/*'
-				include 'web/css/**'
-				include 'web/WEB-INF/fonts/**'
-				include 'web/WEB-INF/reports/**'
-				include 'web/WEB-INF/resources/**'
-				filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
-					expand project: project
+			doLast {
+				project.copy {
+					into project.buildDir
+
+					from (project.srcMainDir) {
+						include 'web/**/*'
+						filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
+							expand project: project
+						}
+					}
+
+					from (extractRequires()) {
+						include requiresInclude
+						include 'bin/**/*'
+						include 'conf/**/*'
+						include 'web/css/**'
+						include 'web/WEB-INF/fonts/**'
+						include 'web/WEB-INF/reports/**'
+						include 'web/WEB-INF/resources/**'
+						filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
+							expand project: project
+						}
+					}
 				}
 			}
-
-			from(project.srcMainDir) {
-				include 'web/**/*'
-				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
-					expand project: project
-				}
-			}
-
-			into project.buildDir
 		}
 
 		project.tasks.register('prepareDebug', Copy) {

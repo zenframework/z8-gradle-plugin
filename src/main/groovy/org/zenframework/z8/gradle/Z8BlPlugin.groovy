@@ -1,17 +1,18 @@
 package org.zenframework.z8.gradle
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project;
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.jvm.tasks.ProcessResources
 
-class Z8BlPlugin extends Z8BlBasePlugin {
+class Z8BlPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		super.apply(project);
-
-		project.pluginManager.apply(Z8JavaPlugin.class);
+		project.pluginManager.apply(Z8BasePlugin.class)
+		project.pluginManager.apply(Z8BlBasePlugin.class)
+		project.pluginManager.apply(Z8JavaPlugin.class)
 
 		project.dependencies {
 			compile "org.zenframework.z8:org.zenframework.z8.server:${project.z8Version}"

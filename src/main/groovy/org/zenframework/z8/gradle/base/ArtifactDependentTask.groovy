@@ -17,12 +17,13 @@ class ArtifactDependentTask extends DefaultTask {
 
 	FileTree extractRequires() {
 		requires.inject(project.files()) { tree, zip ->
+			project.logger.info "Requires: ${zip}"
 			tree.plus(project.zipTree(zip))
 		}.asFileTree
 	}
 
 	void requires(FileCollection requires) {
-		this.requires.setFrom(requires)
+		this.requires.setFrom(this.requires.plus(requires))
 	}
 
 	void requiresInclude(Object include) {

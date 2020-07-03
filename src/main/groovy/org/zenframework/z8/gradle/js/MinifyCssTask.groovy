@@ -14,7 +14,7 @@ class MinifyCssTask extends JavaExec {
 
 	@Override
 	public Task configure(Closure closure) {
-		classpath = project.configurations.webtools
+		classpath = project.configurations.jstools
 		main = 'com.yahoo.platform.yui.compressor.Bootstrap'
 		super.configure(closure);
 	}
@@ -23,6 +23,7 @@ class MinifyCssTask extends JavaExec {
 	public void exec() {
 		def source = Z8GradleUtil.getPath(source)
 		def output = Z8GradleUtil.getPath(output)
+		jvmArgs = [ '-Xss4M' ]
 		args = [ '-v', '--type', 'css', '-o', output, source ]
 		super.exec();
 	}

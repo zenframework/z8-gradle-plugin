@@ -14,7 +14,7 @@ class MinifyJsTask extends JavaExec {
 
 	@Override
 	public Task configure(Closure closure) {
-		classpath = project.configurations.webtools
+		classpath = project.configurations.jstools
 		main = 'com.google.javascript.jscomp.CommandLineRunner'
 		super.configure(closure);
 	}
