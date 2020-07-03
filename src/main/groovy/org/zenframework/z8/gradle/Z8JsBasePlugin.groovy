@@ -4,11 +4,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.bundling.Zip
+import org.zenframework.z8.gradle.base.ArtifactDependentTask
 import org.zenframework.z8.gradle.js.ConcatTask
-import org.zenframework.z8.gradle.js.JszipTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
-import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8JsBasePlugin implements Plugin<Project> {
 
@@ -18,13 +18,13 @@ class Z8JsBasePlugin implements Plugin<Project> {
 
 		project.configurations {
 			jstools
-			jscompile {
+			webcompile {
 				canBeResolved = true
 				canBeConsumed = false
 				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
 						project.objects.named(LibraryElements, 'web'))
 			}
-			jsartifact {
+			webartifact {
 				canBeResolved = false
 				canBeConsumed = true
 				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
@@ -40,16 +40,16 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		project.tasks.register('concatCss', ConcatTask) {
 			group 'build'
 			description 'Concat CSS files'
-			requires project.configurations.jscompile
+			requires project.configurations.webcompile
 			source = project.file("${project.srcMainDir}/css")
-			output = project.file("${project.buildDir}/web/debug/css/${project.rootProject.name}.css")
+			output = project.file("${project.buildDir}/web/debug/css/${project.name}.css")
 		}
 
 		project.tasks.register('minifyCss', MinifyCssTask) {
 			group 'build'
 			description 'Minify CSS files'
 			source = project.tasks.concatCss.output
-			output = project.file("${project.buildDir}/web/css/${project.rootProject.name}.css")
+			output = project.file("${project.buildDir}/web/css/${project.name}.css")
 			doLast {
 				project.ant.replaceregexp(file: output.get(), match: '(calc\\([\\d|\\.]+[^+]*)(\\+)', replace: '\\1 \\2 ', flags: 'g')
 			}
@@ -58,30 +58,60 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		project.tasks.register('concatJs', ConcatTask) {
 			group 'build'
 			description 'Concat JS files'
-			requires project.configurations.jscompile
+			requires project.configurations.webcompile
 			source = project.file("${project.srcMainDir}/js")
-			output = project.file("${project.buildDir}/web/debug/${project.rootProject.name}.js")
+			output = project.file("${project.buildDir}/web/debug/${project.name}.js")
 		}
 
 		project.tasks.register('minifyJs', MinifyJsTask) {
 			group 'build'
 			description 'Minify JS files'
 			source = project.tasks.concatJs.output
-			output = project.file("${project.buildDir}/web/${project.rootProject.name}.js")
+			output = project.file("${project.buildDir}/web/${project.name}.js")
+		}
+
+		project.tasks.register('prepareResources', ArtifactDependentTask) {
+			description 'Prepare WEB resources'
+
+			requires project.configurations.webcompile
+
+			doLast {
+				project.copy {
+					into project.buildDir
+
+					from ("${project.srcMainDir}/css") {
+						exclude '.*', '**/*.css'
+					}
+
+					if (!requiresInclude.isEmpty()) {
+						from (extractRequires()) {
+							include requiresInclude
+						}
+					}
+				}
+			}
 		}
 
 		project.tasks.register('assembleJs') {
 			group 'Build'
 			description 'Assemble JS & CSS resources'
-			dependsOn project.tasks.minifyCss, project.tasks.minifyJs
+			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.prepareResources
 		}
 
-		project.tasks.register('jszip', JszipTask) {
-			group = 'build'
-			description = "Assemble JS/CSS archive ${archiveName} into ${project.relativePath(destinationDir)}"
+		project.tasks.register('jszip', Zip) {
+			group 'Build'
+			description "Assemble JS/CSS archive ${archiveName} into ${project.relativePath(destinationDir)}"
+			dependsOn project.tasks.assembleJs
+
+			archiveName "${project.name}-${project.version}.zip"
+			destinationDir project.file("${project.buildDir}/libs/")
+			from("${project.buildDir}") {
+				include 'web/**/*'
+				includeEmptyDirs = false
+			}
 		}
 
-		project.artifacts.add('jsartifact', project.tasks.jszip) {
+		project.artifacts.add('webartifact', project.tasks.jszip) {
 			builtBy project.tasks.jszip
 		}
 
