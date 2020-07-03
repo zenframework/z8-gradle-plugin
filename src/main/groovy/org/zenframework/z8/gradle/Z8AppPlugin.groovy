@@ -44,7 +44,7 @@ class Z8AppPlugin implements Plugin<Project> {
 					from (project.srcMainDir) {
 						include 'web/**/*'
 						filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
-							expand project: project
+							expand project: project.project
 						}
 					}
 
@@ -57,7 +57,7 @@ class Z8AppPlugin implements Plugin<Project> {
 						include 'web/WEB-INF/reports/**'
 						include 'web/WEB-INF/resources/**'
 						filesMatching(['bin/*.sh', 'conf/wrapper.conf']) {
-							expand project: project
+							expand project: project.rootProject
 						}
 					}
 				}
