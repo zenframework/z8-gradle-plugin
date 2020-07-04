@@ -5,10 +5,11 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.bundling.Zip
-import org.zenframework.z8.gradle.base.ArtifactDependentTask
 import org.zenframework.z8.gradle.js.ConcatTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
+import org.zenframework.z8.gradle.js.PrepareResourcesTask
+import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8JsBasePlugin implements Plugin<Project> {
 
@@ -70,27 +71,11 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/${project.name}.js")
 		}
 
-		project.tasks.register('prepareResources', ArtifactDependentTask) {
+		project.tasks.register('prepareResources', PrepareResourcesTask) {
 			description 'Prepare WEB resources'
-
 			requires project.configurations.webcompile
-
-			doLast {
-				project.copy {
-					into "${project.buildDir}/web/css"
-					from ("${project.srcMainDir}/css") {
-						exclude '.buildorder', '**/*.css'
-					}
-				}
-				if (!requiresInclude.isEmpty()) {
-					project.copy {
-						into project.buildDir
-						from (extractRequires()) {
-							include requiresInclude
-						}
-					}
-				}
-			}
+			source = project.file("${project.srcMainDir}/css")
+			output = project.file("${project.buildDir}/web/css")
 		}
 
 		project.tasks.register('assembleJs') {

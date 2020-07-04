@@ -31,4 +31,5 @@ class ArtifactDependentTask extends DefaultTask {
 	void rename(String source, String target) {
 		renames[source] = target
 	}
+
 }
