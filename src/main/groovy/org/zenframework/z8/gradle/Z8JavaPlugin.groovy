@@ -14,13 +14,6 @@ class Z8JavaPlugin implements Plugin<Project> {
 		project.pluginManager.apply(Z8BasePlugin.class)
 		project.pluginManager.apply(JavaPlugin.class)
 
-		// Set Java version and sources encoding
-		project.tasks.withType(JavaCompile) {
-			sourceCompatibility = JavaVersion.VERSION_1_8
-			targetCompatibility = JavaVersion.VERSION_1_8
-			options.encoding = 'UTF-8'
-		}
-
 		project.sourceSets {
 			main {
 				java.outputDir = project.file("${project.buildDir}/classes/main")
