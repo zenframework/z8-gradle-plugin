@@ -1,9 +1,11 @@
 package org.zenframework.z8.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.compile.JavaCompile
 
 class Z8JavaPlugin implements Plugin<Project> {
 
@@ -11,6 +13,13 @@ class Z8JavaPlugin implements Plugin<Project> {
 	void apply(Project project) {
 		project.pluginManager.apply(Z8BasePlugin.class)
 		project.pluginManager.apply(JavaPlugin.class)
+
+		// Set Java version and sources encoding
+		project.tasks.withType(JavaCompile) {
+			sourceCompatibility = JavaVersion.VERSION_1_8
+			targetCompatibility = JavaVersion.VERSION_1_8
+			options.encoding = 'UTF-8'
+		}
 
 		project.sourceSets {
 			main {

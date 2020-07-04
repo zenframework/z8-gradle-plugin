@@ -17,6 +17,10 @@ dependencies {
 
 gradlePlugin {
 	plugins {
+		z8BasePlugin {
+			id = 'z8-base'
+			implementationClass = 'org.zenframework.z8.gradle.Z8BasePlugin'
+		}
 		z8JavaPlugin {
 			id = 'z8-java'
 			implementationClass = 'org.zenframework.z8.gradle.Z8JavaPlugin'
