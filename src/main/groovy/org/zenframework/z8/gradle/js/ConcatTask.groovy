@@ -2,7 +2,9 @@ package org.zenframework.z8.gradle.js
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.zenframework.z8.gradle.base.ArtifactDependentTask
@@ -11,28 +13,38 @@ class ConcatTask extends ArtifactDependentTask {
 
 	private static final String ENCODING = 'UTF-8'
 
-	@InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
+	@Optional @InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
+	@Input def buildorder = '.buildorder'
 
 	@TaskAction
 	def run() {
-		File source = this.source.asFile.getOrNull()
-		if (source == null || !source.exists()) {
-			project.logger.info "Source ${this.source.asFile} doesn't exist. Skipping"
-			return
-		}
-		project.logger.info "Concat from ${source.path}..."
-		
 		def extractedRequires = extractRequires();
+		def source = this.source.asFile.getOrNull()
+
 		def src = requiresInclude.collect { requirement ->
 			extractedRequires.matching { include requirement }.singleFile
-		}.plus(project.file("${source.path}/.buildorder").readLines().findAll {
-			def path = it.trim()
-			!path.isEmpty() && !path.startsWith('#')
-		}.collect {
-			project.file("${source.path}/${it}")
-		})
+		}
+		if (source != null && source.exists()) {
+			def buildorder = project.file("${source.path}/${this.buildorder}")
+			if (buildorder.exists())
+				src = src.plus(buildorder.readLines().findAll {
+					def path = it.trim()
+					!path.isEmpty() && !path.startsWith('#')
+				}.collect {
+					project.file("${source.path}/${it}")
+				})
+			else
+				project.logger.info "Source buildorder ${buildorder} doesn't exist. Skipping"
+		} else {
+			project.logger.info "Source ${this.source.asFile} doesn't exist. Skipping"
+		}
+
+		if (src.empty)
+			return
+
 		src.each { project.logger.info "Concat: ${it}" }
+
 		def dest = output.asFile.get()
 		dest.parentFile.mkdirs()
 		dest.newWriter(ENCODING).withWriter { w ->

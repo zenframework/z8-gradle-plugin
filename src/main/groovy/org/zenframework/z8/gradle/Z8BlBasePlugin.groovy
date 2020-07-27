@@ -44,19 +44,8 @@ class Z8BlBasePlugin implements Plugin<Project> {
 			description = "Assemble BL archive ${archiveName} into ${project.relativePath(destinationDir)}"
 		}
 
-		project.afterEvaluate {
-			project.components.findByName('java').addVariantsFromConfiguration(project.configurations.blartifact) {
-				it.mapToMavenScope("compile")
-			}
-		}
-
 		project.pluginManager.withPlugin('eclipse') {
 			project.eclipse.project.natures 'org.zenframework.z8.pde.ProjectNature'
-		}
-
-		project.artifacts.add('blartifact', project.tasks.blzip.archivePath) {
-			type 'zip'
-			builtBy project.tasks.blzip
 		}
 	}
 

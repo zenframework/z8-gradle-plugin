@@ -4,12 +4,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
+import org.zenframework.z8.gradle.js.CollectResourcesTask
 import org.zenframework.z8.gradle.js.ConcatTask
-import org.zenframework.z8.gradle.js.MinifyCssTask
-import org.zenframework.z8.gradle.js.MinifyJsTask
-import org.zenframework.z8.gradle.js.PrepareResourcesTask
-import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8JsBasePlugin implements Plugin<Project> {
 
@@ -39,49 +37,46 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		}
 
 		project.tasks.register('concatCss', ConcatTask) {
-			group 'build'
+			group 'Build'
 			description 'Concat CSS files'
 			requires project.configurations.webcompile
-			source = project.file("${project.srcMainDir}/css")
-			output = project.file("${project.buildDir}/web/debug/css/${project.name}.css")
-		}
-
-		project.tasks.register('minifyCss', MinifyCssTask) {
-			group 'build'
-			description 'Minify CSS files'
-			source = project.tasks.concatCss.output
+			// Closure allows setting non-existing file
+			source = { project.file("${project.srcMainDir}/css").with { it.exists() ? it : null } }.call()
 			output = project.file("${project.buildDir}/web/css/${project.name}.css")
-			doLast {
-				project.ant.replaceregexp(file: output.get(), match: '(calc\\([\\d|\\.]+[^+]*)(\\+)', replace: '\\1 \\2 ', flags: 'g')
-			}
 		}
 
 		project.tasks.register('concatJs', ConcatTask) {
-			group 'build'
+			group 'Build'
 			description 'Concat JS files'
 			requires project.configurations.webcompile
-			source = project.file("${project.srcMainDir}/js")
-			output = project.file("${project.buildDir}/web/debug/${project.name}.js")
-		}
-
-		project.tasks.register('minifyJs', MinifyJsTask) {
-			group 'build'
-			description 'Minify JS files'
-			source = project.tasks.concatJs.output
+			// Closure allows setting non-existing file
+			source = { project.file("${project.srcMainDir}/js").with { it.exists() ? it : null } }.call()
 			output = project.file("${project.buildDir}/web/${project.name}.js")
 		}
 
-		project.tasks.register('prepareResources', PrepareResourcesTask) {
-			description 'Prepare WEB resources'
+		project.tasks.register('collectDependantJsResources', CollectResourcesTask) {
 			requires project.configurations.webcompile
-			source = project.file("${project.srcMainDir}/css")
-			output = project.file("${project.buildDir}/web/css")
+			requiresExclude '**/*.css', '**/*.js'
+			output = project.file("${project.buildDir}")
+		}
+
+		project.tasks.register('collectOwnJsResources', Copy) {
+			from("${project.srcMainDir}/css") {
+				exclude '**/*.css', '**/*.buildorder'
+			}
+			into "${project.buildDir}/web/css"
+		}
+
+		project.tasks.register('collectJsResources') {
+			group 'Build'
+			description 'Collect JS/CSS resources'
+			dependsOn project.tasks.collectDependantJsResources, project.tasks.collectOwnJsResources
 		}
 
 		project.tasks.register('assembleJs') {
 			group 'Build'
 			description 'Assemble JS & CSS resources'
-			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.prepareResources
+			dependsOn project.tasks.concatCss, project.tasks.concatJs, project.tasks.collectJsResources
 		}
 
 		project.tasks.register('jszip', Zip) {
@@ -96,15 +91,6 @@ class Z8JsBasePlugin implements Plugin<Project> {
 				includeEmptyDirs = false
 			}
 		}
-
-		project.artifacts.add('webartifact', project.tasks.jszip) {
-			builtBy project.tasks.jszip
-		}
-
-		// TODO eclipse autoBuildTasks
-		//eclipse {
-		//	autoBuildTasks assembleWeb
-		//}
 	}
 
 }

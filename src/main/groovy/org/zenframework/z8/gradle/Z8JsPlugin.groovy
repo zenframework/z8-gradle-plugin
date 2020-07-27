@@ -12,6 +12,10 @@ class Z8JsPlugin implements Plugin<Project> {
 		project.pluginManager.apply(Z8BasePlugin.class)
 		project.pluginManager.apply(Z8JsBasePlugin.class)
 
+		project.artifacts.add('webartifact', project.tasks.jszip) {
+			builtBy project.tasks.jszip
+		}
+
 		project.pluginManager.withPlugin('maven-publish') {
 			project.publishing {
 				repositories { mavenLocal() }

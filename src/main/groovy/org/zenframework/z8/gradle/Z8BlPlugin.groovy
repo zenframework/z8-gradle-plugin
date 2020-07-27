@@ -42,6 +42,17 @@ class Z8BlPlugin implements Plugin<Project> {
 			resources.srcDir project.tasks.compileBl.output
 		}
 
+		project.afterEvaluate {
+			project.components.findByName('java').addVariantsFromConfiguration(project.configurations.blartifact) {
+				it.mapToMavenScope("compile")
+			}
+		}
+
+		project.artifacts.add('blartifact', project.tasks.blzip.archivePath) {
+			type 'zip'
+			builtBy project.tasks.blzip
+		}
+
 		project.pluginManager.withPlugin('eclipse') {
 			project.eclipse.classpath.file.whenMerged {
 				if (!project.hasProperty('z8Home'))
