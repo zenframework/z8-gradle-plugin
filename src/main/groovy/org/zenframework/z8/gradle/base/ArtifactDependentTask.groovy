@@ -5,12 +5,13 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class ArtifactDependentTask extends DefaultTask {
 
-	@Optional @Input final ConfigurableFileCollection requires = project.objects.fileCollection()
+	@Optional @InputFiles final ConfigurableFileCollection requires = project.objects.fileCollection()
 	@Optional @Input protected final List<String> requiresInclude = []
 	@Optional @Input protected final List<String> requiresExclude = []
 	@Optional @Input protected String requiresRoot = null

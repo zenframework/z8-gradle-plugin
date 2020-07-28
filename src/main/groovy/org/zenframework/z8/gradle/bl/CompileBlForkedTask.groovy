@@ -3,8 +3,8 @@ package org.zenframework.z8.gradle.bl
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
@@ -18,7 +18,7 @@ class CompileBlForkedTask extends JavaExec {
 	@Optional @InputDirectory final DirectoryProperty docsTemplates = project.objects.directoryProperty()
 	@Optional @OutputDirectory final DirectoryProperty docsOutput = project.objects.directoryProperty()
 
-	@Optional @Input final ConfigurableFileCollection requires = project.objects.fileCollection()
+	@Optional @InputFiles final ConfigurableFileCollection requires = project.objects.fileCollection()
 
 	File getOutput() {
 		return output.asFile.getOrNull()
