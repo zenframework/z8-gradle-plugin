@@ -42,6 +42,7 @@ class Z8BlBasePlugin implements Plugin<Project> {
 		project.tasks.register('blzip', BlzipTask) {
 			group = 'build'
 			description = "Assemble BL archive ${archiveName} into ${project.relativePath(destinationDir)}"
+			dependsOn project.tasks.compileBl
 		}
 
 		project.pluginManager.withPlugin('eclipse') {

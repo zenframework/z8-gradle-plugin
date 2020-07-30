@@ -12,12 +12,15 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.FileChange
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
 import org.zenframework.z8.compiler.cmd.Main
 import org.zenframework.z8.gradle.base.ArtifactDependentTask
 
 class CompileBlTask extends ArtifactDependentTask {
 
-	@InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
+	@Incremental @InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
 	@OutputDirectory final DirectoryProperty output = project.objects.directoryProperty()
 
 	@Optional @InputDirectory final DirectoryProperty docsTemplates = project.objects.directoryProperty()
@@ -34,7 +37,14 @@ class CompileBlTask extends ArtifactDependentTask {
 	}
 
 	@TaskAction
-	def run() {
+	def run(InputChanges inputChanges) {
+		if (inputChanges.getFileChanges(source).find { FileChange change ->
+			change.file.name.endsWith('.bl')
+		} == null) {
+			project.logger.info 'No BL source changed. Task is UP-TO-DATE'
+			return
+		}
+
 		def source = Z8GradleUtil.getPath(source)
 		def output = Z8GradleUtil.getPath(output)
 		def requires = requires.asFileTree.collect() { it.path }
