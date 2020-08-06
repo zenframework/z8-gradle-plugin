@@ -12,6 +12,7 @@ class Z8BlPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		project.pluginManager.apply(Z8JavaPlugin.class)
+		project.pluginManager.apply(Z8BasePlugin.class)
 
 		project.configurations {
 			compiler

@@ -86,6 +86,11 @@ class Z8JsPlugin implements Plugin<Project> {
 		project.tasks.assemble {
 			dependsOn project.tasks.z8zip
 		}
+
+		project.artifacts.add('webartifact', project.tasks.z8zip.archivePath) {
+			type 'zip'
+			builtBy project.tasks.z8zip
+		}
 	}
 
 }
