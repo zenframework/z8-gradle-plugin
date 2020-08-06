@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.Copy
-import org.zenframework.z8.gradle.base.ArtifactDependentTask
 import org.zenframework.z8.gradle.js.CollectResourcesTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
@@ -17,7 +16,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.pluginManager.apply(ApplicationPlugin.class)
 		project.pluginManager.apply(Z8BasePlugin.class)
 		project.pluginManager.apply(Z8JavaPlugin.class)
-		project.pluginManager.apply(Z8JsBasePlugin.class)
+		project.pluginManager.apply(Z8JsPlugin.class)
 
 		project.configurations {
 			boot

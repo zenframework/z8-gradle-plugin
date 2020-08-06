@@ -4,6 +4,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Zip
 
 class Z8BasePlugin implements Plugin<Project> {
 
@@ -15,15 +17,49 @@ class Z8BasePlugin implements Plugin<Project> {
 			project.ext.z8Version = Z8_DEFAULT_VERSION
 		if (!project.hasProperty('srcMainDir'))
 			project.ext.srcMainDir = project.file("${project.projectDir}/src/main")
+		if (!project.hasProperty('resolveGroups'))
+			project.ext.resolveGroups = [ project.group ]
+
+		project.logger.info "Z8 Project [${project.name}] sources main dir: ${project.srcMainDir}"
 
 		project.configurations.all {
 			resolutionStrategy.dependencySubstitution.all { DependencySubstitution dependency ->
-				if (dependency.requested instanceof ModuleComponentSelector && dependency.requested.group == project.group) {
-					def targetProject = project.findProject(":${dependency.requested.module}")
-					if (targetProject != null) {
-						project.logger.info "Z8 [${project.name}]: substitute ${dependency.requested.displayName} by ${targetProject}"
-						dependency.useTarget targetProject
+				if (dependency.requested instanceof ModuleComponentSelector) {
+					def resolve = project.resolveGroups.find { dependency.requested.group.startsWith it } != null
+					project.logger.debug "Resolve ${dependency.requested.group} by ${project.resolveGroups} ... ${resolve ? 'Ok' : 'Skip'}"
+					if (resolve) {
+						def targetProject = project.findProject(":${dependency.requested.module}")
+						if (targetProject != null) {
+							project.logger.info "Z8 [${project.name}]: substitute ${dependency.requested.displayName} by ${targetProject}"
+							dependency.useTarget targetProject
+						}
 					}
+				}
+			}
+		}
+
+		project.tasks.register('z8zip', Zip) {
+			group 'Build'
+			description 'Assemble BL + JS/CSS archive'
+
+			archiveName "${project.name}-${project.version}.zip"
+			destinationDir project.file("${project.buildDir}/libs/")
+
+			from(project.projectDir) {
+				include '**/*.bl'
+				includeEmptyDirs = false
+			}
+			from(project.buildDir) {
+				include 'web/**/*'
+				includeEmptyDirs = false
+			}
+		}
+
+		project.pluginManager.withPlugin('maven-publish') {
+			project.publishing {
+				repositories { mavenLocal() }
+				publications {
+					mavenZ8(MavenPublication) { artifact source: project.tasks.z8zip, extension: 'zip' }
 				}
 			}
 		}
