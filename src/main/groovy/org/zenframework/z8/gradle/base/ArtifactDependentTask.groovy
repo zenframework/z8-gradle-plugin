@@ -12,11 +12,11 @@ import org.zenframework.z8.gradle.util.Z8GradleUtil
 class ArtifactDependentTask extends DefaultTask {
 
 	@Optional @InputFiles final ConfigurableFileCollection requires = project.objects.fileCollection()
-	@Optional @Input protected final List<String> requiresInclude = []
-	@Optional @Input protected final List<String> requiresExclude = []
-	@Optional @Input protected String requiresRoot = null
+	@Optional @Input final List<String> requiresInclude = []
+	@Optional @Input final List<String> requiresExclude = []
+	@Optional @Input String requiresRoot = null
 
-	@Optional @Input protected final Map<String, String> renames = [:]
+	@Optional @Input final Map<String, String> renames = [:]
 
 	FileTree extractRequires() {
 		requires.inject(project.files().asFileTree) { tree, zip ->
