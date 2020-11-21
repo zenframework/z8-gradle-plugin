@@ -2,6 +2,7 @@ package org.zenframework.z8.gradle.js
 
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.JavaExec
@@ -13,9 +14,9 @@ class MinifyJsTask extends JavaExec {
 
 	@InputFile final RegularFileProperty source = project.objects.fileProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
-	@Optional @Input String warningLevel = null
-	@Optional @Input String languageIn = null
-	@Optional @Input String languageOut = null
+	@Optional @Input final Property<String> warningLevel = project.objects.property(String)
+	@Optional @Input final Property<String> languageIn = project.objects.property(String)
+	@Optional @Input final Property<String> languageOut = project.objects.property(String)
 
 	@Override
 	public Task configure(Closure closure) {
@@ -28,6 +29,10 @@ class MinifyJsTask extends JavaExec {
 	public void exec() {
 		def source = Z8GradleUtil.getPath(source)
 		def output = Z8GradleUtil.getPath(output)
+		def warningLevel = warningLevel.getOrNull()
+		def languageIn = languageIn.getOrNull()
+		def languageOut = languageOut.getOrNull()
+
 		def argsList = [ '--rewrite_polyfills', 'false' ]
 		if (warningLevel != null)
 			argsList.addAll([ '--warning_level', warningLevel ])
@@ -36,6 +41,7 @@ class MinifyJsTask extends JavaExec {
 		if (languageOut != null)
 			argsList.addAll([ '--language_out', languageOut ])
 		argsList.addAll([ '--js_output_file', output, source ])
+
 		args = argsList
 		super.exec();
 	}
