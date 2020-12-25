@@ -47,6 +47,7 @@ class Z8BasePlugin implements Plugin<Project> {
 
 			from(project.projectDir) {
 				include '**/*.bl'
+				include '**/*.nls'
 				includeEmptyDirs = false
 			}
 			from(project.buildDir) {
