@@ -1,6 +1,7 @@
 package org.zenframework.z8.gradle.util
 
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemLocationProperty
 import org.gradle.api.file.FileTree
@@ -9,8 +10,8 @@ class Z8GradleUtil {
 
 	private Z8GradleUtil() {}
 
-	public static String getPath(FileSystemLocationProperty dir) {
-		File file = dir.asFile.getOrNull()
+	public static String getPath(FileSystemLocationProperty path) {
+		File file = path.asFile.getOrNull()
 		return file != null ? file.path : null
 	}
 

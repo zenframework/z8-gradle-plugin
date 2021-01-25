@@ -7,8 +7,10 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -16,48 +18,56 @@ import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.zenframework.z8.compiler.cmd.Main
+import org.zenframework.z8.compiler.workspace.ProjectProperties
 import org.zenframework.z8.gradle.base.ArtifactDependentTask
+import org.zenframework.z8.gradle.util.Z8GradleUtil
 
-class CompileBlTask extends ArtifactDependentTask {
+abstract class CompileBlTask extends DefaultTask {
 
-	@Incremental @InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
-	@OutputDirectory final DirectoryProperty output = project.objects.directoryProperty()
+	@Incremental @InputFiles abstract ConfigurableFileCollection getSources()
+	@OutputDirectory abstract DirectoryProperty getOutput()
+	@Input abstract ListProperty<String> getSourcePaths()
 
-	@Optional @InputDirectory final DirectoryProperty docsTemplates = project.objects.directoryProperty()
-	@Optional @OutputDirectory final DirectoryProperty docsOutput = project.objects.directoryProperty()
+	@Optional @InputDirectory abstract DirectoryProperty getDocsTemplates()
+	@Optional @OutputDirectory abstract DirectoryProperty getDocsOutput()
+
+	@Optional @InputFiles abstract ConfigurableFileCollection getRequires()
+
+	void sourcePaths(Object... sourcePaths) {
+		this.sourcePaths.addAll(sourcePaths.collect { it.toString() })
+	}
 
 	@Override
 	public Task configure(Closure closure) {
-		if (getSource() == null)
-			setSource(project.projectDir)
-		if (getOutput() == null)
-			setOutput("${project.projectDir}/.java")
-		requires project.configurations.blcompile
 		super.configure(closure);
+
+		requires.setFrom(project.configurations.blcompile)
+		sources.setFrom(sources.plus(project.files(sourcePaths.get().collect { project.file("${project.projectDir}/${it}") }.toArray())))
 	}
 
 	@TaskAction
 	def run(InputChanges inputChanges) {
-		if (inputChanges.getFileChanges(source).find { FileChange change ->
-			change.file.name.endsWith('.bl')
-		} == null) {
-			project.logger.info 'No BL source changed. Task is UP-TO-DATE'
-			return
-		}
+		ProjectProperties properties = new ProjectProperties(project.projectDir.path)
+		properties.load()
 
-		def source = Z8GradleUtil.getPath(source)
+		def sourcePaths = sourcePaths.get()
 		def output = Z8GradleUtil.getPath(output)
-		def requires = requires.asFileTree.collect() { it.path }
+		def requires = requires.collect() { it.path }
 		def docsTemplates = Z8GradleUtil.getPath(docsTemplates)
 		def docsOutput = Z8GradleUtil.getPath(docsOutput)
 
-		project.logger.info "BL Source:   ${source}" +
-				"\nBL Output:   ${output}" +
-				"\nBL Requires: ${requires.join('\n             ')}" +
-				(docsTemplates != null ? "\nBL Docs Templates: ${docsTemplates}" : '') +
-				(docsOutput != null ? "BL Docs Templates: ${docsOutput}" : '')
-
-		Main.compile(project.name, source, requires.toArray(new String[0]), output, docsOutput, docsTemplates);
+		if (!sourcePaths.empty)
+			properties.sourcePaths = sourcePaths
+		if (output != null)
+			properties.outputPath = output
+		if (!requires.empty)
+			properties.requiredPaths = requires
+		if (docsTemplates != null)
+			properties.docTemplatePath = docsTemplates
+		if (docsOutput != null)
+			properties.docsPath = docsOutput
+	
+		Main.compile(properties);
 	}
 
 }

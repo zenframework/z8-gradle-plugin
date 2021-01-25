@@ -1,11 +1,14 @@
 package org.zenframework.z8.gradle
 
+import org.eclipse.core.runtime.IPath
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Zip
+import org.zenframework.z8.compiler.workspace.ProjectProperties
 
 class Z8BasePlugin implements Plugin<Project> {
 
@@ -19,8 +22,6 @@ class Z8BasePlugin implements Plugin<Project> {
 			project.ext.srcMainDir = project.file("${project.projectDir}/src/main")
 		if (!project.hasProperty('resolveGroups'))
 			project.ext.resolveGroups = [ project.group ]
-
-		project.logger.info "Z8 Project [${project.name}] sources main dir: ${project.srcMainDir}"
 
 		project.configurations.all {
 			resolutionStrategy.dependencySubstitution.all { DependencySubstitution dependency ->
@@ -38,6 +39,12 @@ class Z8BasePlugin implements Plugin<Project> {
 			}
 		}
 
+		project.tasks.register('z8Info', DefaultTask) {
+			doLast {
+				println "Z8 Project [${project.name}] sources main dir: ${project.srcMainDir}"
+			}
+		}
+
 		project.tasks.register('z8zip', Zip) {
 			group 'Build'
 			description 'Assemble BL + JS/CSS archive'
@@ -45,11 +52,16 @@ class Z8BasePlugin implements Plugin<Project> {
 			archiveName "${project.name}-${project.version}.zip"
 			destinationDir project.file("${project.buildDir}/libs/")
 
-			from(project.projectDir) {
-				include '**/*.bl'
-				include '**/*.nls'
-				includeEmptyDirs = false
+			if (project.tasks.hasProperty('compileBl')) {
+				for (File sourcePath : project.tasks.compileBl.sources) {
+					from(sourcePath) {
+						include '**/*.bl'
+						include '**/*.nls'
+						includeEmptyDirs = false
+					}
+				}
 			}
+
 			from(project.buildDir) {
 				include 'web/**/*'
 				includeEmptyDirs = false

@@ -14,8 +14,7 @@ class Z8AppPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		project.pluginManager.apply(ApplicationPlugin.class)
-		project.pluginManager.apply(Z8BasePlugin.class)
-		project.pluginManager.apply(Z8JavaPlugin.class)
+		project.pluginManager.apply(Z8BlPlugin.class)
 		project.pluginManager.apply(Z8JsPlugin.class)
 
 		project.configurations {
@@ -66,7 +65,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			description 'Collect WEB debug resources'
 			dependsOn project.tasks.collectJsResources
 		
-			from ("${project.buildDir}/web") {
+			from("${project.buildDir}/web") {
 				include 'css/**/*'
 				exclude '**/*.css'
 			}
@@ -77,7 +76,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		}
 
 		project.tasks.register('collectOwnWebResources', Copy) {
-			from (project.srcMainDir) {
+			from(project.srcMainDir) {
 				include 'web/**/*'
 				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
 					expand project: project.project

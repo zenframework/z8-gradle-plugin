@@ -5,7 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.zenframework.z8.gradle.bl.CompileBlForkedTask
+import org.zenframework.z8.gradle.bl.CompileBlTask
 
 class Z8BlPlugin implements Plugin<Project> {
 
@@ -43,9 +43,11 @@ class Z8BlPlugin implements Plugin<Project> {
 			blcompile "org.zenframework.z8:org.zenframework.z8.lang:${project.z8Version}@zip"
 		}
 
-		project.tasks.register('compileBl', CompileBlForkedTask) {
+		project.tasks.register('compileBl', CompileBlTask) {
 			group 'build'
 			description 'Compile BL sources'
+			sourcePaths = [ "${project.srcMainDir}/bl" ]
+			output = project.file("${project.projectDir}/.java")
 		}
 
 		project.tasks.z8zip {
@@ -65,7 +67,7 @@ class Z8BlPlugin implements Plugin<Project> {
 		}
 
 		project.tasks.clean.doLast {
-			project.tasks.compileBl.output.deleteDir()
+			project.tasks.compileBl.output.get().asFile.deleteDir()
 		}
 
 		project.sourceSets.main {
