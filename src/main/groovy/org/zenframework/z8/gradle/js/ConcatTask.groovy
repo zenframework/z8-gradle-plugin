@@ -16,6 +16,7 @@ class ConcatTask extends ArtifactDependentTask {
 	@Optional @InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
 	@Input def buildorder = '.buildorder'
+	@Input def append = false
 
 	@TaskAction
 	def run() {
@@ -47,7 +48,7 @@ class ConcatTask extends ArtifactDependentTask {
 
 		def dest = output.asFile.get()
 		dest.parentFile.mkdirs()
-		dest.newWriter(ENCODING).withWriter { w ->
+		dest.newWriter(ENCODING, append).withWriter { w ->
 			src.each { f -> w << f.getText(ConcatTask.ENCODING) << '\n' }
 		}
 	}
