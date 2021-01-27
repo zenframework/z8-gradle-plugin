@@ -52,8 +52,12 @@ class Z8BasePlugin implements Plugin<Project> {
 			archiveName "${project.name}-${project.version}.zip"
 			destinationDir project.file("${project.buildDir}/libs/")
 
+			from("${project.buildDir}/bl") {
+				include '**/*'
+				includeEmptyDirs = false
+			}
+
 			from(project.buildDir) {
-				include 'bl/**/*'
 				include 'web/**/*'
 				includeEmptyDirs = false
 			}
