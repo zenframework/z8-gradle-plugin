@@ -1,5 +1,6 @@
 package org.zenframework.z8.gradle
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project;
 import org.gradle.api.attributes.LibraryElements
@@ -50,8 +51,24 @@ class Z8BlPlugin implements Plugin<Project> {
 			output = project.file("${project.projectDir}/.java")
 		}
 
+		project.tasks.register('copyBl', DefaultTask) {
+			doLast {
+				project.copy {
+					for (File sourcePath : project.tasks.compileBl.sources) {
+						from(sourcePath) {
+							include '**/*.bl'
+							include '**/*.nls'
+							includeEmptyDirs = false
+						}
+					}
+
+					into "${project.buildDir}/bl"
+				}
+			}
+		}
+
 		project.tasks.z8zip {
-			dependsOn project.tasks.compileBl
+			dependsOn project.tasks.compileBl, project.tasks.copyBl
 		}
 
 		project.tasks.withType(JavaCompile) {

@@ -52,17 +52,8 @@ class Z8BasePlugin implements Plugin<Project> {
 			archiveName "${project.name}-${project.version}.zip"
 			destinationDir project.file("${project.buildDir}/libs/")
 
-			if (project.tasks.hasProperty('compileBl')) {
-				for (File sourcePath : project.tasks.compileBl.sources) {
-					from(sourcePath) {
-						include '**/*.bl'
-						include '**/*.nls'
-						includeEmptyDirs = false
-					}
-				}
-			}
-
 			from(project.buildDir) {
+				include 'bl/**/*'
 				include 'web/**/*'
 				includeEmptyDirs = false
 			}
