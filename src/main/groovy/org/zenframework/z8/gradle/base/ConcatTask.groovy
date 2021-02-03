@@ -1,4 +1,4 @@
-package org.zenframework.z8.gradle.js
+package org.zenframework.z8.gradle.base
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -7,7 +7,6 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.zenframework.z8.gradle.base.ArtifactDependentTask
 
 class ConcatTask extends ArtifactDependentTask {
 

@@ -5,8 +5,8 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
-import org.zenframework.z8.gradle.js.CollectResourcesTask
-import org.zenframework.z8.gradle.js.ConcatTask
+import org.zenframework.z8.gradle.base.CollectResourcesTask
+import org.zenframework.z8.gradle.base.ConcatTask
 
 class Z8JsPlugin implements Plugin<Project> {
 

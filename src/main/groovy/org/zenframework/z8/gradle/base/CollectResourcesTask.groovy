@@ -1,10 +1,9 @@
-package org.zenframework.z8.gradle.js
+package org.zenframework.z8.gradle.base
 
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
-import org.zenframework.z8.gradle.base.ArtifactDependentTask
 
 class CollectResourcesTask extends ArtifactDependentTask {
 
@@ -19,6 +18,8 @@ class CollectResourcesTask extends ArtifactDependentTask {
 	Task configure(Closure closure) {
 		doLast {
 			project.copy {
+				includeEmptyDirs = false
+
 				from(extractRequires()) {
 					include requiresInclude
 					exclude requiresExclude

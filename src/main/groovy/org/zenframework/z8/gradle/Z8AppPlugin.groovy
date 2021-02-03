@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.Copy
-import org.zenframework.z8.gradle.js.CollectResourcesTask
+import org.zenframework.z8.gradle.base.CollectResourcesTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
 
@@ -99,11 +99,20 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.buildDir
 		}
 
+		project.tasks.register('collectDependantNlsResources', CollectResourcesTask) {
+			description 'Collect NLS resources'
+
+			requires project.configurations.blcompile
+			requiresInclude '**/*.nls'
+
+			output = project.file("${project.buildDir}/web/WEB-INF/resources")
+		}
+
 		project.tasks.register('assembleWeb') {
 			group 'Build'
 			description 'Assemble WEB resources'
-			dependsOn project.tasks.assembleJs, project.tasks.collectDebugResources,
-					project.tasks.collectOwnWebResources, project.tasks.collectDependantWebResources
+			dependsOn project.tasks.assembleJs, project.tasks.collectDebugResources, project.tasks.collectOwnWebResources,
+					project.tasks.collectDependantWebResources, project.tasks.collectDependantNlsResources
 		}
 
 		project.tasks.assemble.dependsOn project.tasks.assembleWeb
