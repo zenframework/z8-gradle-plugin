@@ -47,7 +47,12 @@ class Z8BlPlugin implements Plugin<Project> {
 		project.tasks.register('compileBl', CompileBlTask) {
 			group 'build'
 			description 'Compile BL sources'
-			sourcePaths = [ "${project.srcMainDir}/bl" ]
+			sourcePaths = [
+				"${project.srcMainDir}/bl",
+				"${project.projectDir}/WEB-INF/resources",
+				"${project.srcMainDir}/WEB-INF/resources",
+				"${project.srcMainDir}/web/WEB-INF/resources"
+			]
 			output = project.file("${project.projectDir}/.java")
 		}
 
