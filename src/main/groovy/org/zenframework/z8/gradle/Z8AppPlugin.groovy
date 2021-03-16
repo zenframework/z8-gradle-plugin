@@ -94,7 +94,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			requiresInclude 'web/WEB-INF/reports/**'
 			requiresInclude 'web/WEB-INF/resources/**'
 
-			replaceMatching 'bin/*.sh', 'conf/wrapper.conf'
+			replaceMatching 'bin/*.sh', 'bin/service', 'conf/wrapper.conf'
 
 			output = project.buildDir
 		}
