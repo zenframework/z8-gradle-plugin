@@ -25,6 +25,14 @@ class Z8AppPlugin implements Plugin<Project> {
 				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
 						project.objects.named(LibraryElements, 'web'))
 			}
+			jst {
+				canBeResolved = true
+				canBeConsumed = false
+				attributes {
+					attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+							project.objects.named(LibraryElements, 'bl'))
+				}
+			}
 		}
 
 		project.dependencies {
@@ -108,11 +116,16 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/WEB-INF/resources")
 		}
 
+		project.tasks.register('jstDependencies', Copy) {
+			from project.configurations.jst
+			into "${project.buildDir}/web/WEB-INF/just-in-time/dependencies"
+		}
+
 		project.tasks.register('assembleWeb') {
 			group 'Build'
 			description 'Assemble WEB resources'
 			dependsOn project.tasks.assembleJs, project.tasks.collectDebugResources, project.tasks.collectOwnWebResources,
-					project.tasks.collectDependantWebResources, project.tasks.collectDependantNlsResources
+					project.tasks.collectDependantWebResources, project.tasks.collectDependantNlsResources, project.tasks.jstDependencies
 		}
 
 		project.tasks.assemble.dependsOn project.tasks.assembleWeb
