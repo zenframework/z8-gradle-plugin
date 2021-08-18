@@ -22,7 +22,7 @@ class ArtifactDependentTask extends DefaultTask {
 		requires.inject(project.files().asFileTree) { tree, req ->
 			project.logger.info "Requires: ${req}"
 			File file = project.file(req)
-			tree.plus(Z8GradleUtil.subTree(project, file.isFile() && file.name.endsWith('.zip')
+			tree = tree.plus(Z8GradleUtil.subTree(project, file.isFile() && file.name.endsWith('.zip')
 					? project.zipTree(req) : project.fileTree(req), requiresRoot))
 		}.asFileTree
 	}

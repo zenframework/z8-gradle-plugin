@@ -1,9 +1,13 @@
 package org.zenframework.z8.gradle.base
 
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -14,6 +18,10 @@ class ConcatTask extends ArtifactDependentTask {
 
 	@Optional @InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
+
+	@Optional @Input final List<String> beforeSource = []
+	@Optional @Input final List<String> afterSource = []
+
 	@Input def buildorder = '.buildorder'
 	@Input def append = false
 
@@ -25,10 +33,16 @@ class ConcatTask extends ArtifactDependentTask {
 		def src = requiresInclude.collect { requirement ->
 			extractedRequires.matching { include requirement }.singleFile
 		}
+
+		beforeSource.findAll { it.exists() }.each { file ->
+			project.logger.info "Before source: ${file}"
+			src.add(file)
+		}
+
 		if (source != null && source.exists()) {
 			def buildorder = project.file("${source.path}/${this.buildorder}")
 			if (buildorder.exists())
-				src = src.plus(buildorder.readLines().findAll {
+				src.addAll(buildorder.readLines().findAll {
 					def path = it.trim()
 					!path.isEmpty() && !path.startsWith('#')
 				}.collect {
@@ -38,6 +52,11 @@ class ConcatTask extends ArtifactDependentTask {
 				project.logger.info "Source buildorder ${buildorder} doesn't exist. Skipping"
 		} else {
 			project.logger.info "Source ${this.source.asFile} doesn't exist. Skipping"
+		}
+
+		afterSource.findAll { it.exists() }.each { file ->
+			project.logger.info "After source: ${file}"
+			src.add(file)
 		}
 
 		if (src.empty)
@@ -50,6 +69,14 @@ class ConcatTask extends ArtifactDependentTask {
 		dest.newWriter(ENCODING, append).withWriter { w ->
 			src.each { f -> w << f.getText(ConcatTask.ENCODING) << '\n' }
 		}
+	}
+
+	void beforeSource(Object beforeSource) {
+		this.beforeSource.add project.file(beforeSource)
+	}
+
+	void afterSource(Object afterSource) {
+		this.afterSource.add project.file(afterSource)
 	}
 
 }

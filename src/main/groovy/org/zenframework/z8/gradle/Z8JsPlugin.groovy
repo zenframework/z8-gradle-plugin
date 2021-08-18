@@ -37,22 +37,23 @@ class Z8JsPlugin implements Plugin<Project> {
 			jstools 'org.zenframework.z8.dependencies.minimizers:yuicompressor:3.0'
 		}
 
-//		project.tasks.register('compileSass', CompileSassTask) {
-//			group 'Build'
-//			description 'Build SASS files'
-//			source = { project.file("${project.srcMainDir}/sass/index.sass").with { it.exists() ? it : null } }.call()
-//			output = project.file("${project.buildDir}/web/css/${project.name}.css")
-//		}
+		project.tasks.register('compileSass', CompileSassTask) {
+			group 'Build'
+			description 'Compile SASS files'
+			// Closure allows setting non-existing file
+			source = { project.file("${project.srcMainDir}/sass").with { it.exists() ? it : null } }.call()
+			output = project.file("${project.buildDir}/tmp/${project.name}.sass.css")
+		}
 
 		project.tasks.register('concatCss', ConcatTask) {
 			group 'Build'
 			description 'Concat CSS files'
+			dependsOn project.tasks.compileSass
 			requires project.configurations.webcompile
+			beforeSource "${project.buildDir}/tmp/${project.name}.sass.css"
 			// Closure allows setting non-existing file
 			source = { project.file("${project.srcMainDir}/css").with { it.exists() ? it : null } }.call()
 			output = project.file("${project.buildDir}/web/css/${project.name}.css")
-
-//			dependsOn project.tasks.compileSass
 		}
 
 		project.tasks.register('concatJs', ConcatTask) {
