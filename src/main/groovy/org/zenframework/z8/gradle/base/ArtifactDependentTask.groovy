@@ -19,9 +19,11 @@ class ArtifactDependentTask extends DefaultTask {
 	@Optional @Input final Map<String, String> renames = [:]
 
 	FileTree extractRequires() {
-		requires.inject(project.files().asFileTree) { tree, zip ->
-			project.logger.info "Requires: ${zip}"
-			tree.plus(Z8GradleUtil.subTree(project, project.zipTree(zip), requiresRoot))
+		requires.inject(project.files().asFileTree) { tree, req ->
+			project.logger.info "Requires: ${req}"
+			File file = project.file(req)
+			tree.plus(Z8GradleUtil.subTree(project, file.isFile() && file.name.endsWith('.zip')
+					? project.zipTree(req) : project.fileTree(req), requiresRoot))
 		}.asFileTree
 	}
 
