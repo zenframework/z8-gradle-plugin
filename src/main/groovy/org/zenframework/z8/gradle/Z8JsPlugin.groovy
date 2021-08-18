@@ -7,6 +7,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.zenframework.z8.gradle.base.CollectResourcesTask
 import org.zenframework.z8.gradle.base.ConcatTask
+import org.zenframework.z8.gradle.js.CompileSassTask
 
 class Z8JsPlugin implements Plugin<Project> {
 
@@ -36,6 +37,13 @@ class Z8JsPlugin implements Plugin<Project> {
 			jstools 'org.zenframework.z8.dependencies.minimizers:yuicompressor:3.0'
 		}
 
+//		project.tasks.register('compileSass', CompileSassTask) {
+//			group 'Build'
+//			description 'Build SASS files'
+//			source = { project.file("${project.srcMainDir}/sass/index.sass").with { it.exists() ? it : null } }.call()
+//			output = project.file("${project.buildDir}/web/css/${project.name}.css")
+//		}
+
 		project.tasks.register('concatCss', ConcatTask) {
 			group 'Build'
 			description 'Concat CSS files'
@@ -43,6 +51,8 @@ class Z8JsPlugin implements Plugin<Project> {
 			// Closure allows setting non-existing file
 			source = { project.file("${project.srcMainDir}/css").with { it.exists() ? it : null } }.call()
 			output = project.file("${project.buildDir}/web/css/${project.name}.css")
+
+//			dependsOn project.tasks.compileSass
 		}
 
 		project.tasks.register('concatJs', ConcatTask) {
