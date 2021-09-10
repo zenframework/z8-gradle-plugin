@@ -4,27 +4,16 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project;
 import org.gradle.api.attributes.LibraryElements
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.language.jvm.tasks.ProcessResources
-import org.zenframework.z8.gradle.bl.CompileBlTask
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Zip
 
 class Z8BlPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		project.pluginManager.apply(Z8JavaPlugin.class)
-		project.pluginManager.apply(Z8BasePlugin.class)
+		project.pluginManager.apply(Z8BlBasePlugin.class)
 
 		project.configurations {
-			compiler
-			blcompile {
-				canBeResolved = true
-				canBeConsumed = false
-				attributes {
-					attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-							project.objects.named(LibraryElements, 'bl'))
-				}
-			}
 			blartifact {
 				canBeResolved = false
 				canBeConsumed = true
@@ -35,75 +24,43 @@ class Z8BlPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.dependencies {
-			compiler "org.zenframework.z8:org.zenframework.z8.compiler:${project.z8Version}"
-
-			compile "org.zenframework.z8:org.zenframework.z8.server:${project.z8Version}"
-			compile "org.zenframework.z8:org.zenframework.z8.lang:${project.z8Version}"
-
-			blcompile "org.zenframework.z8:org.zenframework.z8.lang:${project.z8Version}@zip"
-		}
-
-		project.tasks.register('compileBl', CompileBlTask) {
-			group 'build'
-			description 'Compile BL sources'
-			sourcePaths = [
-				"${project.srcMainDir}/bl",
-				"${project.projectDir}/WEB-INF/resources",
-				"${project.srcMainDir}/WEB-INF/resources",
-				"${project.srcMainDir}/web/WEB-INF/resources"
-			]
-			output = project.file("${project.projectDir}/.java")
-		}
-
-		project.tasks.register('copyBl', DefaultTask) {
+		project.tasks.register('collectNls', DefaultTask) {
 			doLast {
 				project.copy {
 					for (File sourcePath : project.tasks.compileBl.sources) {
 						from(sourcePath) {
-							include '**/*.bl'
-							include '**/*.nls'
 							includeEmptyDirs = false
+							include '**/*.nls'
 						}
 					}
 
-					into "${project.buildDir}/bl"
+					into "${project.buildDir}/WEB-INF/resources"
 				}
 			}
 		}
 
-		project.tasks.z8zip {
-			dependsOn project.tasks.compileBl, project.tasks.copyBl
-		}
+		project.tasks.register('assembleBl', Zip) {
+			group 'Build'
+			dependsOn project.tasks.compileBl, project.tasks.collectNls
+			description "Assemble BL archive ${archiveName} into ${project.relativePath(destinationDir)}"
 
-		project.tasks.withType(JavaCompile) {
-			dependsOn project.tasks.compileBl
-		}
+			archiveName "${project.name}-${project.version}.zip"
+			destinationDir project.file("${project.buildDir}/libs")
 
-		project.tasks.withType(ProcessResources) {
-			dependsOn project.tasks.compileBl
-		}
+			for (File sourcePath : project.tasks.compileBl.sources) {
+				from(sourcePath) {
+					includeEmptyDirs = false
+					include '**/*.bl'
+				}
+			}
 
-		project.tasks.assemble {
-			dependsOn project.tasks.z8zip
-		}
-
-		project.tasks.clean.doLast {
-			project.tasks.compileBl.output.get().asFile.deleteDir()
-		}
-
-		project.sourceSets.main {
-			java.srcDir project.tasks.compileBl.output
-			resources.srcDir project.tasks.compileBl.output
-		}
-
-		project.pluginManager.withPlugin('eclipse') {
-			project.eclipse.project.natures 'org.zenframework.z8.pde.ProjectNature'
-			project.eclipse.classpath.file.whenMerged {
-				if (!project.hasProperty('z8Home'))
-					entries += new org.gradle.plugins.ide.eclipse.model.ProjectDependency('/org.zenframework.z8.lang')
+			from("${project.buildDir}") {
+				includeEmptyDirs = false
+				include 'WEB-INF/**/*'
 			}
 		}
+
+		project.tasks.assemble.dependsOn project.tasks.assembleBl
 
 		project.afterEvaluate {
 			project.components.findByName('java').addVariantsFromConfiguration(project.configurations.blartifact) {
@@ -111,9 +68,18 @@ class Z8BlPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.artifacts.add('blartifact', project.tasks.z8zip.archivePath) {
+		project.artifacts.add('blartifact', project.tasks.assembleBl.archivePath) {
 			type 'zip'
-			builtBy project.tasks.z8zip
+			builtBy project.tasks.assembleBl
+		}
+
+		project.pluginManager.withPlugin('maven-publish') {
+			project.publishing {
+				repositories { mavenLocal() }
+				publications {
+					mavenBl(MavenPublication) { artifact source: project.tasks.assembleBl, extension: 'zip' }
+				}
+			}
 		}
 	}
 

@@ -1,14 +1,10 @@
 package org.zenframework.z8.gradle
 
-import org.eclipse.core.runtime.IPath
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ModuleComponentSelector
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.bundling.Zip
-import org.zenframework.z8.compiler.workspace.ProjectProperties
 
 class Z8BasePlugin implements Plugin<Project> {
 
@@ -42,33 +38,6 @@ class Z8BasePlugin implements Plugin<Project> {
 		project.tasks.register('z8Info', DefaultTask) {
 			doLast {
 				println "Z8 Project [${project.name}] sources main dir: ${project.srcMainDir}"
-			}
-		}
-
-		project.tasks.register('z8zip', Zip) {
-			group 'Build'
-			description 'Assemble BL + JS/CSS archive'
-
-			archiveName "${project.name}-${project.version}.zip"
-			destinationDir project.file("${project.buildDir}/libs/")
-
-			from("${project.buildDir}/bl") {
-				include '**/*'
-				includeEmptyDirs = false
-			}
-
-			from(project.buildDir) {
-				include 'web/**/*'
-				includeEmptyDirs = false
-			}
-		}
-
-		project.pluginManager.withPlugin('maven-publish') {
-			project.publishing {
-				repositories { mavenLocal() }
-				publications {
-					mavenZ8(MavenPublication) { artifact source: project.tasks.z8zip, extension: 'zip' }
-				}
 			}
 		}
 	}

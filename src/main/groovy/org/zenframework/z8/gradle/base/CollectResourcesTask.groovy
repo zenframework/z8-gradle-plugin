@@ -9,9 +9,14 @@ class CollectResourcesTask extends ArtifactDependentTask {
 
 	@OutputDirectory final DirectoryProperty output = project.objects.directoryProperty()
 	@Input final replaceMatching = []
+	@Input boolean stripFolders = false
 
 	void replaceMatching(Object... matchings) {
 		replaceMatching.addAll(Arrays.asList(matchings))
+	}
+
+	void into(Object into) {
+		output.set(project.file(into))
 	}
 
 	@Override
@@ -20,13 +25,18 @@ class CollectResourcesTask extends ArtifactDependentTask {
 			project.copy {
 				includeEmptyDirs = false
 
-				from(extractRequires()) {
+				def extracted = extractRequires()
+				if (stripFolders)
+					extracted = extracted.files
+
+				from(extracted) {
 					include requiresInclude
 					exclude requiresExclude
-					if (replaceMatching != null && !replaceMatching.empty)
+					if (replaceMatching != null && !replaceMatching.empty) {
 						filesMatching(replaceMatching) {
 							expand project: project
 						}
+					}
 				}
 
 				into output

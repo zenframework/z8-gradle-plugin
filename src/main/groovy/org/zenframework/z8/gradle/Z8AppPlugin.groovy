@@ -14,12 +14,12 @@ class Z8AppPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		project.pluginManager.apply(ApplicationPlugin.class)
-		project.pluginManager.apply(Z8BlPlugin.class)
-		project.pluginManager.apply(Z8JsPlugin.class)
+		project.pluginManager.apply(Z8BlBasePlugin.class)
+		project.pluginManager.apply(Z8JsBasePlugin.class)
 
 		project.configurations {
 			boot
-			webresources {
+			resources {
 				canBeResolved = true
 				canBeConsumed = false
 				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
@@ -28,16 +28,14 @@ class Z8AppPlugin implements Plugin<Project> {
 			jst {
 				canBeResolved = true
 				canBeConsumed = false
-				attributes {
-					attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-							project.objects.named(LibraryElements, 'bl'))
-				}
+				attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+						project.objects.named(LibraryElements, 'bl'))
 			}
 		}
 
 		project.dependencies {
 			boot "org.zenframework.z8:org.zenframework.z8.boot:${project.z8Version}"
-			webresources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
+			resources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
 		}
 
 		project.sourceSets.main.resources.srcDirs "${project.srcMainDir}/resources"
@@ -67,9 +65,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/${project.name}.js")
 		}
 
-		project.tasks.assembleJs.dependsOn project.tasks.minifyCss, project.tasks.minifyJs
-
-		project.tasks.register('collectDebugResources', Copy) {
+		project.tasks.register('collectProjectDebugResources', Copy) {
 			description 'Collect WEB debug resources'
 			dependsOn project.tasks.collectJsResources
 		
@@ -83,7 +79,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			into "${project.buildDir}/web/debug"
 		}
 
-		project.tasks.register('collectOwnWebResources', Copy) {
+		project.tasks.register('collectProjectWebResources', Copy) {
 			from(project.srcMainDir) {
 				include 'web/**/*'
 				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
@@ -93,27 +89,23 @@ class Z8AppPlugin implements Plugin<Project> {
 			into project.buildDir
 		}
 
-		project.tasks.register('collectDependantWebResources', CollectResourcesTask) {
-			description 'Collect application resources'
-
-			requires project.configurations.webresources
-			requiresInclude 'bin/**/*', 'conf/**/*'
-			requiresInclude 'web/WEB-INF/fonts/**'
-			requiresInclude 'web/WEB-INF/reports/**'
-			requiresInclude 'web/WEB-INF/resources/**'
-
-			replaceMatching 'bin/*.sh', 'bin/service', 'conf/wrapper.conf'
-
-			output = project.buildDir
-		}
-
-		project.tasks.register('collectDependantNlsResources', CollectResourcesTask) {
-			description 'Collect NLS resources'
+		project.tasks.register('collectDependantWebinfResources', CollectResourcesTask) {
+			description 'Collect dependant WEB-INF resources'
 
 			requires project.configurations.blcompile
-			requiresInclude '**/*.nls'
+			requiresInclude 'WEB-INF/**/*'
 
-			output = project.file("${project.buildDir}/web/WEB-INF/resources")
+			into "${project.buildDir}/web"
+		}
+
+		project.tasks.register('collectDistributionResources', CollectResourcesTask) {
+			description 'Collect application resources'
+
+			requires project.configurations.resources
+			requiresInclude 'bin/**/*', 'conf/**/*'
+			replaceMatching 'bin/*.sh', 'bin/service', 'conf/wrapper.conf'
+
+			into project.buildDir
 		}
 
 		project.tasks.register('jstDependencies', Copy) {
@@ -124,11 +116,13 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('assembleWeb') {
 			group 'Build'
 			description 'Assemble WEB resources'
-			dependsOn project.tasks.assembleJs, project.tasks.collectDebugResources, project.tasks.collectOwnWebResources,
-					project.tasks.collectDependantWebResources, project.tasks.collectDependantNlsResources, project.tasks.jstDependencies
+			dependsOn project.tasks.minifyCss, project.tasks.minifyJs,
+					project.tasks.collectProjectDebugResources, project.tasks.collectProjectWebResources,
+					project.tasks.collectDependantWebinfResources, project.tasks.collectDistributionResources,
+					project.tasks.jstDependencies
 		}
 
-		project.tasks.assemble.dependsOn project.tasks.assembleWeb
+		project.tasks.run.dependsOn project.tasks.assembleWeb
 		project.tasks.distZip.dependsOn project.tasks.assembleWeb
 		project.tasks.distTar.dependsOn project.tasks.assembleWeb
 		project.tasks.installDist.dependsOn project.tasks.assembleWeb
