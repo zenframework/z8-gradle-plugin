@@ -21,10 +21,10 @@ class Z8JsPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.tasks.register('assembleJs', Zip) {
+		project.tasks.register('assembleWebartifact', Zip) {
 			group 'Build'
 			description "Assemble JS/CSS archive ${archiveName} into ${project.relativePath(destinationDir)}"
-			dependsOn project.tasks.concatCss, project.tasks.concatJs, project.tasks.collectJsResources
+			dependsOn project.tasks.assembleJs
 
 			archiveName "${project.name}-${project.version}.zip"
 			destinationDir project.file("${project.buildDir}/libs")
@@ -36,18 +36,18 @@ class Z8JsPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.tasks.assemble.dependsOn project.tasks.assembleJs
+		project.tasks.assemble.dependsOn project.tasks.assembleWebartifact
 
-		project.artifacts.add('webartifact', project.tasks.assembleJs.archivePath) {
+		project.artifacts.add('webartifact', project.tasks.assembleWebartifact.archivePath) {
 			type 'zip'
-			builtBy project.tasks.assembleJs
+			builtBy project.tasks.assembleWebartifact
 		}
 
 		project.pluginManager.withPlugin('maven-publish') {
 			project.publishing {
 				repositories { mavenLocal() }
 				publications {
-					mavenJs(MavenPublication) { artifact source: project.tasks.assembleJs, extension: 'zip' }
+					mavenJs(MavenPublication) { artifact source: project.tasks.assembleWebartifact, extension: 'zip' }
 				}
 			}
 		}

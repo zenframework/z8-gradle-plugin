@@ -65,7 +65,7 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}")
 		}
 
-		project.tasks.register('collectOwnJsResources', Copy) {
+		project.tasks.register('collectProjectJsResources', Copy) {
 			from("${project.srcMainDir}/css") {
 				exclude '**/*.css', '**/*.buildorder'
 			}
@@ -74,7 +74,13 @@ class Z8JsBasePlugin implements Plugin<Project> {
 
 		project.tasks.register('collectJsResources') {
 			description 'Collect JS/CSS resources'
-			dependsOn project.tasks.collectDependantJsResources, project.tasks.collectOwnJsResources
+			dependsOn project.tasks.collectDependantJsResources, project.tasks.collectProjectJsResources
+		}
+
+		project.tasks.register('assembleJs') {
+			group 'Build'
+			description 'Assemble JS/CSS & web resources'
+			dependsOn project.tasks.concatCss, project.tasks.concatJs, project.tasks.collectJsResources
 		}
 	}
 

@@ -65,6 +65,28 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/${project.name}.js")
 		}
 
+		project.tasks.register('collectDependantWebinfResources', CollectResourcesTask) {
+			description 'Collect dependant WEB-INF resources'
+
+			requires project.configurations.blcompile
+			requiresInclude 'WEB-INF/**/*'
+			// TODO Remove later
+			requiresExclude 'WEB-INF/project.xml', 'WEB-INF/server.properties'
+
+			into "${project.buildDir}/web"
+		}
+
+		project.tasks.register('collectProjectWebResources', Copy) {
+			dependsOn project.tasks.collectDependantWebinfResources
+			from(project.srcMainDir) {
+				include 'web/**/*'
+				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml', 'web/WEB-INF/server.properties']) {
+					expand project: project.project
+				}
+			}
+			into project.buildDir
+		}
+
 		project.tasks.register('collectProjectDebugResources', Copy) {
 			description 'Collect WEB debug resources'
 			dependsOn project.tasks.collectJsResources
@@ -77,25 +99,6 @@ class Z8AppPlugin implements Plugin<Project> {
 				include 'index.html'
 			}
 			into "${project.buildDir}/web/debug"
-		}
-
-		project.tasks.register('collectProjectWebResources', Copy) {
-			from(project.srcMainDir) {
-				include 'web/**/*'
-				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml']) {
-					expand project: project.project
-				}
-			}
-			into project.buildDir
-		}
-
-		project.tasks.register('collectDependantWebinfResources', CollectResourcesTask) {
-			description 'Collect dependant WEB-INF resources'
-
-			requires project.configurations.blcompile
-			requiresInclude 'WEB-INF/**/*'
-
-			into "${project.buildDir}/web"
 		}
 
 		project.tasks.register('collectDistributionResources', CollectResourcesTask) {
