@@ -26,7 +26,7 @@ class Z8JsPlugin implements Plugin<Project> {
 			description "Assemble JS/CSS archive ${archiveName} into ${project.relativePath(destinationDir)}"
 			dependsOn project.tasks.assembleJs
 
-			archiveName "${project.name}-${project.version}.zip"
+			archiveName "${project.name}-${project.version}.jsar"
 			destinationDir project.file("${project.buildDir}/libs")
 
 			from(project.buildDir) {
@@ -39,7 +39,7 @@ class Z8JsPlugin implements Plugin<Project> {
 		project.tasks.assemble.dependsOn project.tasks.assembleWebartifact
 
 		project.artifacts.add('webartifact', project.tasks.assembleWebartifact.archivePath) {
-			type 'zip'
+			type 'jsar'
 			builtBy project.tasks.assembleWebartifact
 		}
 
@@ -47,7 +47,7 @@ class Z8JsPlugin implements Plugin<Project> {
 			project.publishing {
 				repositories { mavenLocal() }
 				publications {
-					mavenJs(MavenPublication) { artifact source: project.tasks.assembleWebartifact, extension: 'zip' }
+					mavenJs(MavenPublication) { artifact source: project.tasks.assembleWebartifact, extension: 'jsar' }
 				}
 			}
 		}

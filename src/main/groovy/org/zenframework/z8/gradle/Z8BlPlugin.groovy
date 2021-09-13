@@ -43,7 +43,7 @@ class Z8BlPlugin implements Plugin<Project> {
 			dependsOn project.tasks.compileBl, project.tasks.collectNls
 			description "Assemble BL archive ${archiveName} into ${project.relativePath(destinationDir)}"
 
-			archiveName "${project.name}-${project.version}.zip"
+			archiveName "${project.name}-${project.version}.blar"
 			destinationDir project.file("${project.buildDir}/libs")
 
 			for (File sourcePath : project.tasks.compileBl.sources) {
@@ -68,7 +68,7 @@ class Z8BlPlugin implements Plugin<Project> {
 		}
 
 		project.artifacts.add('blartifact', project.tasks.assembleBlartifact.archivePath) {
-			type 'zip'
+			type 'blar'
 			builtBy project.tasks.assembleBlartifact
 		}
 
@@ -76,7 +76,7 @@ class Z8BlPlugin implements Plugin<Project> {
 			project.publishing {
 				repositories { mavenLocal() }
 				publications {
-					mavenBl(MavenPublication) { artifact source: project.tasks.assembleBlartifact, extension: 'zip' }
+					mavenBl(MavenPublication) { artifact source: project.tasks.assembleBlartifact, extension: 'blar' }
 				}
 			}
 		}

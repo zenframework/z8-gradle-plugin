@@ -8,6 +8,8 @@ import org.gradle.api.file.FileTree
 
 class Z8GradleUtil {
 
+	public static final String[] Archives = [ 'zip', 'jar', 'war', 'blar', 'jsar' ]
+
 	private Z8GradleUtil() {}
 
 	public static String getPath(FileSystemLocationProperty path) {
@@ -50,4 +52,9 @@ class Z8GradleUtil {
 		path
 	}
 
+	public static boolean isArchive(File file) {
+		int extPos = file.name.lastIndexOf('.')
+		String ext = extPos >= 0 ? file.name.substring(extPos + 1).toLowerCase() : ''
+		return Archives.contains(ext)
+	}
 }
