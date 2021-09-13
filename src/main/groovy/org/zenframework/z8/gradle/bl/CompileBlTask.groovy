@@ -42,7 +42,7 @@ abstract class CompileBlTask extends DefaultTask {
 		super.configure(closure);
 
 		requires.setFrom(project.configurations.blcompile)
-		sources.setFrom(sources.plus(project.files(sourcePaths.get().collect { project.file("${project.projectDir}/${it}") }.toArray())))
+		sources.setFrom(sources.plus(project.files(sourcePaths.get().collect { project.file(it) }.toArray())))
 	}
 
 	@TaskAction
