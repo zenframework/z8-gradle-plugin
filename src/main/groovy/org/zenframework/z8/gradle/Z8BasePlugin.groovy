@@ -19,7 +19,7 @@ class Z8BasePlugin implements Plugin<Project> {
 		if (!project.hasProperty('z8Version'))
 			project.ext.z8Version = Z8_DEFAULT_VERSION
 		if (!project.hasProperty('srcMainDir'))
-			project.ext.srcMainDir = project.file("${project.projectDir}/src/main")
+			project.ext.srcMainDir = project.file('src/main')
 		if (!project.hasProperty('resolveGroups'))
 			project.ext.resolveGroups = [ project.group ]
 
