@@ -8,7 +8,7 @@ import org.gradle.api.artifacts.component.ModuleComponentSelector
 
 class Z8BasePlugin implements Plugin<Project> {
 
-	static final String Z8_DEFAULT_VERSION = '1.3.0'
+	static final String Z8_DEFAULT_VERSION = '2.0'
 
 	@Override
 	void apply(Project project) {
