@@ -6,6 +6,7 @@ import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.Copy
 import org.zenframework.z8.gradle.base.CollectResourcesTask
+import org.zenframework.z8.gradle.base.ServerPropertiesTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
 
@@ -76,15 +77,25 @@ class Z8AppPlugin implements Plugin<Project> {
 			into "${project.buildDir}/web"
 		}
 
-		project.tasks.register('collectProjectWebResources', Copy) {
-			dependsOn project.tasks.collectDependantWebinfResources
-			from(project.srcMainDir) {
-				include 'web/**/*'
-				filesMatching(['web/**/*.html', 'web/WEB-INF/project.xml', 'web/WEB-INF/server.properties']) {
-					expand project: project.project
-				}
-			}
+		project.tasks.register('collectDependantWebResources', CollectResourcesTask) {
+			description 'Collect dependant web resources'
+
+			requires project.configurations.webcompile
+			requiresInclude 'web/**/*.html'
+
 			into project.buildDir
+		}
+
+		project.tasks.register('collectProjectResources', Copy) {
+			description 'Collect project own resources'
+
+			into project.buildDir
+		}
+
+		project.tasks.register('serverProperties', ServerPropertiesTask) {
+			description 'Generate server.properties'
+
+			output = project.file("${project.buildDir}/web/WEB-INF/server.properties")
 		}
 
 		project.tasks.register('collectProjectDebugResources', Copy) {
@@ -119,9 +130,10 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('assembleWeb') {
 			group 'Build'
 			description 'Assemble WEB resources'
-			dependsOn project.tasks.minifyCss, project.tasks.minifyJs,
-					project.tasks.collectProjectDebugResources, project.tasks.collectProjectWebResources,
-					project.tasks.collectDependantWebinfResources, project.tasks.collectDistributionResources,
+			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.serverProperties,
+					project.tasks.collectProjectDebugResources, project.tasks.collectProjectResources,
+					project.tasks.collectDependantWebinfResources, project.tasks.collectDependantWebResources,
+					project.tasks.collectDistributionResources,
 					project.tasks.jstDependencies
 		}
 

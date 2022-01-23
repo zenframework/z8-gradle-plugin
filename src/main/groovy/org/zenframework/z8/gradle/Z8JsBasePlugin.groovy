@@ -62,14 +62,16 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		project.tasks.register('collectDependantJsResources', CollectResourcesTask) {
 			requires project.configurations.webcompile
 			requiresExclude '**/*.css', '**/*.js'
-			output = project.file("${project.buildDir}")
+			output = project.file(project.buildDir)
 		}
 
 		project.tasks.register('collectProjectJsResources', Copy) {
-			from("${project.srcMainDir}/css") {
-				exclude '**/*.css', '**/*.buildorder'
+			from(project.srcMainDir) {
+				include 'css/**/*'
+				exclude 'css/**/*.css', 'css/**/*.buildorder'
 			}
-			into "${project.buildDir}/web/css"
+			from("${project.srcMainDir}/html")
+			into "${project.buildDir}/web"
 		}
 
 		project.tasks.register('collectJsResources') {
