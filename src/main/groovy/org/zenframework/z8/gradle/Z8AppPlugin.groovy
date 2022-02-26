@@ -49,6 +49,10 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/debug/${project.name}.js")
 		}
 
+		project.tasks.collectDependantJsResources {
+			replaceMatching 'web/**/*.html'
+		}
+
 		project.tasks.register('minifyCss', MinifyCssTask) {
 			group 'build'
 			description 'Minify CSS files'
@@ -77,15 +81,6 @@ class Z8AppPlugin implements Plugin<Project> {
 			into "${project.buildDir}/web"
 		}
 
-		project.tasks.register('collectDependantWebResources', CollectResourcesTask) {
-			description 'Collect dependant web resources'
-
-			requires project.configurations.webcompile
-			requiresInclude 'web/**/*.html'
-
-			into project.buildDir
-		}
-
 		project.tasks.register('collectProjectResources', Copy) {
 			description 'Collect project own resources'
 
@@ -101,7 +96,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('collectProjectDebugResources', Copy) {
 			description 'Collect WEB debug resources'
 			dependsOn project.tasks.collectJsResources
-		
+
 			from("${project.buildDir}/web") {
 				include 'css/**/*'
 				exclude '**/*.css'
@@ -132,8 +127,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			description 'Assemble WEB resources'
 			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.serverProperties,
 					project.tasks.collectProjectDebugResources, project.tasks.collectProjectResources,
-					project.tasks.collectDependantWebinfResources, project.tasks.collectDependantWebResources,
-					project.tasks.collectDistributionResources,
+					project.tasks.collectDependantWebinfResources, project.tasks.collectDistributionResources,
 					project.tasks.jstDependencies
 		}
 
