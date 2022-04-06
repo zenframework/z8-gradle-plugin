@@ -32,11 +32,10 @@ class ServerPropertiesTask extends DefaultTask {
 		'web.server.start.application.server' : true,
 		'web.server.start.authority.center' : true,
 		'web.server.start.interconnection.center' : false,
+		'web.server.useContainerSession' : true,
 
-		'web.server.servlet.startApplicationServer' : true,
-		'web.server.servlet.startAuthorityCenter' : true,
-		'web.server.servlet.startInterconnectionCenter' : false,
-		'web.server.servlet.useContainerSession' : true,
+		'web.server.cache.enable' : false,
+		'web.server.sso.enable' : false,
 
 		'fts.configuration' : 'russian',
 
