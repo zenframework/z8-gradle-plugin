@@ -63,8 +63,14 @@ class ServerPropertiesTask extends DefaultTask {
 		'office.home' : '/path/to/libreoffice'
 	]
 
+	@Optional @Input final Map<String, String> custom = [:]
+
 	void defaults(def defaults) {
 		this.defaults.putAll(defaults)
+	}
+
+	void custom(def custom) {
+		this.custom.putAll(custom)
 	}
 
 	@Override
@@ -81,7 +87,11 @@ class ServerPropertiesTask extends DefaultTask {
 		def source = this.source.asFile.getOrElse(getClass().getResource('/template/server.properties'))
 		def output = this.output.asFile.get()
 
-		output.text = new SimpleTemplateEngine().createTemplate(source.text).make([project:project])
+		def text = new SimpleTemplateEngine().createTemplate(source.text).make([project:project]).toString()
+		if (!custom.isEmpty())
+			text += "\n\n### Custom properties\n\n${custom.entrySet().join('\n')}"
+
+		output.text = text
 	}
 
 }
