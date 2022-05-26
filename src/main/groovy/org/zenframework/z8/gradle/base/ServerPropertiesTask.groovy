@@ -35,7 +35,6 @@ class ServerPropertiesTask extends DefaultTask {
 		'web.server.useContainerSession' : true,
 
 		'web.server.cache.enable' : false,
-		'web.server.sso.enable' : false,
 
 		'fts.configuration' : 'russian',
 
