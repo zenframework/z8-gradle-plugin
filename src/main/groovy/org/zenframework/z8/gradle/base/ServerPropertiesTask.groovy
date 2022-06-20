@@ -59,7 +59,8 @@ class ServerPropertiesTask extends DefaultTask {
 		'transport.job.cron' : '',
 		'maintenance.job.cron' : '',
 
-		'office.home' : '/path/to/libreoffice'
+		'office.home' : '/path/to/libreoffice',
+		'converter.url' : ''
 	]
 
 	@Optional @Input final Map<String, String> custom = [:]
