@@ -91,6 +91,8 @@ class Z8AppPlugin implements Plugin<Project> {
 			description 'Generate server.properties'
 
 			output = project.file("${project.buildDir}/web/WEB-INF/server.properties")
+			template = 'WEB-INF/server.properties'
+			customTemplate = 'WEB-INF/server.properties.custom'
 		}
 
 		project.tasks.register('collectProjectDebugResources', Copy) {

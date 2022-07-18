@@ -4,7 +4,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -13,7 +12,8 @@ import groovy.text.SimpleTemplateEngine
 
 class ServerPropertiesTask extends DefaultTask {
 
-	@Optional @InputFile final RegularFileProperty source = project.objects.fileProperty()
+	static final String DEFAULT_TEMPLATE = '/template/server.properties'
+
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
 
 	@Optional @Input final Map<String, String> defaults = [
@@ -63,14 +63,16 @@ class ServerPropertiesTask extends DefaultTask {
 		'converter.url' : ''
 	]
 
-	@Optional @Input final Map<String, String> custom = [:]
+	@Input def template
+	@Input def customTemplate
+	@Input def customProperties = [:]
 
 	void defaults(def defaults) {
 		this.defaults.putAll(defaults)
 	}
 
-	void custom(def custom) {
-		this.custom.putAll(custom)
+	void customProperties(def customProperties) {
+		this.customProperties.putAll(custom)
 	}
 
 	@Override
@@ -84,12 +86,21 @@ class ServerPropertiesTask extends DefaultTask {
 
 	@TaskAction
 	def run() {
-		def source = this.source.asFile.getOrElse(getClass().getResource('/template/server.properties'))
+		def template = project.file(this.template)
+		if (template == null || !template.exists())
+			template = getClass().getResource(DEFAULT_TEMPLATE)
+		def customTemplate = project.file(this.customTemplate)
 		def output = this.output.asFile.get()
 
-		def text = new SimpleTemplateEngine().createTemplate(source.text).make([project:project]).toString()
-		if (!custom.isEmpty())
-			text += "\n\n### Custom properties\n\n${custom.entrySet().join('\n')}"
+		def text = new SimpleTemplateEngine().createTemplate(template.text).make([project:project]).toString()
+
+		if (customTemplate.exists() || !customProperties.isEmpty()) {
+			text += '\n\n### Custom properties'
+			if (customTemplate.exists())
+				text += '\n\n' + new SimpleTemplateEngine().createTemplate(customTemplate.text).make([project:project]).toString()
+			if (!customProperties.isEmpty())
+				text += '\n\n' + customProperties.entrySet().join('\n')
+		}
 
 		output.text = text
 	}
