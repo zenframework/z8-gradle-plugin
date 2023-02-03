@@ -36,6 +36,18 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'web.server.cache.enable' : false,
 
+		'web.server.sso.authenticator': '',
+
+		'web.server.saml.sp.entityId': '',
+		'web.server.saml.sp.certificate': '',
+		'web.server.saml.sp.privateKey': '',
+
+		'web.server.saml.idp.entityId': '',
+		'web.server.saml.idp.certificate': '',
+		'web.server.saml.idp.ssoUrl': '',
+
+		'trusted.users.create': false,
+
 		'fts.configuration' : 'russian',
 
 		'web.server.upload.max' : 15,
