@@ -41,6 +41,7 @@ class ServerPropertiesTask extends DefaultTask {
 		'web.server.saml.sp.entityId': '',
 		'web.server.saml.sp.certificate': '',
 		'web.server.saml.sp.privateKey': '',
+		'web.server.saml.sp.acsUrl': '',
 
 		'web.server.saml.idp.entityId': '',
 		'web.server.saml.idp.certificate': '',
