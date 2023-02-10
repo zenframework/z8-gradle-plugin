@@ -46,6 +46,8 @@ class ServerPropertiesTask extends DefaultTask {
 		'web.server.saml.idp.certificate': '',
 		'web.server.saml.idp.ssoUrl': '',
 
+		'web.server.saml.security.wantMessagesSigned': false,
+
 		'trusted.users.create': false,
 
 		'fts.configuration' : 'russian',
