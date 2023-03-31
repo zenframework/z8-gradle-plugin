@@ -29,12 +29,22 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'application.language' : 'ru',
 
+		'security.log.enabled': false,
+
+		'web.server.scheme': 'https',
+
 		'web.server.start.application.server' : true,
 		'web.server.start.authority.center' : true,
 		'web.server.start.interconnection.center' : false,
 		'web.server.useContainerSession' : true,
 
 		'web.server.cache.enable' : false,
+
+		'web.server.sso.authenticator': '',
+
+		'saml.config': '../../conf/onelogin.saml.properties',
+
+		'trusted.users.create': false,
 
 		'fts.configuration' : 'russian',
 
