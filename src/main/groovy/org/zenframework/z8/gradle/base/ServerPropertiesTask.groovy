@@ -29,6 +29,8 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'application.language' : 'ru',
 
+		'security.log.enabled': false,
+
 		'web.server.scheme': 'https',
 
 		'web.server.start.application.server' : true,
