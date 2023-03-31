@@ -29,6 +29,8 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'application.language' : 'ru',
 
+		'web.server.scheme': 'https',
+
 		'web.server.start.application.server' : true,
 		'web.server.start.authority.center' : true,
 		'web.server.start.interconnection.center' : false,
@@ -38,15 +40,7 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'web.server.sso.authenticator': '',
 
-		'web.server.saml.sp.entityId': '',
-		'web.server.saml.sp.certificate': '',
-		'web.server.saml.sp.privateKey': '',
-
-		'web.server.saml.idp.entityId': '',
-		'web.server.saml.idp.certificate': '',
-		'web.server.saml.idp.ssoUrl': '',
-
-		'web.server.saml.security.wantMessagesSigned': false,
+		'saml.config': '../../conf/onelogin.saml.properties',
 
 		'trusted.users.create': false,
 
