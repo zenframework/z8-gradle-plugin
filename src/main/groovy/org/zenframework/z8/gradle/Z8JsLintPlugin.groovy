@@ -3,28 +3,8 @@ package org.zenframework.z8.gradle
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.Input
-
-class RunJsLintTask extends Exec {
-	@Input String mask = '**/*.js'
-
-	void mask(String mask) {
-		this.mask = mask
-	}
-
-	@Override
-	protected void exec() {
-		File path = project.file("${project.srcMainDir}/js")
-		if (!path.exists())
-			return;
-
-		commandLine "${project.nodejsPath}/node_modules/.bin/${project.eslintCmd}", path.getAbsolutePath() + '/' + mask,
-				'--resolve-plugins-relative-to', project.nodejsPath
-
-		super.exec();
-	}
-}
+import org.zenframework.z8.gradle.node.NpmInstallTask
+import org.zenframework.z8.gradle.node.RunJsLintTask
 
 class Z8JsLintPlugin implements Plugin<Project> {
 
@@ -47,6 +27,12 @@ class Z8JsLintPlugin implements Plugin<Project> {
 			dependsOn project.tasks.installJsLint
 		}
 
+		project.tasks.register('fixJsLint', RunJsLintTask) {
+			group 'z8 js'
+			description 'Run JS lint and fix errors'
+			dependsOn project.tasks.installJsLint
+			options '--fix'
+		}
 	}
 
 }
