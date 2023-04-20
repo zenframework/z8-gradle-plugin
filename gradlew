@@ -22,7 +22,7 @@
 ##
 ##############################################################################
 
-JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+JAVA_HOME="/opt/prog/java-8-openjdk"
 
 # Attempt to set APP_HOME
 # Resolve links: $0 may be a link

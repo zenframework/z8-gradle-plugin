@@ -45,11 +45,19 @@ gradlePlugin {
 			id = 'z8-app'
 			implementationClass = 'org.zenframework.z8.gradle.Z8AppPlugin'
 		}
+		z8NodeJsPlugin {
+			id = 'z8-nodejs'
+			implementationClass = 'org.zenframework.z8.gradle.Z8NodeJsPlugin'
+		}
+		z8JsLintPlugin {
+			id = 'z8-js-lint'
+			implementationClass = 'org.zenframework.z8.gradle.Z8JsLintPlugin'
+		}
 	}
 }
 
 group = 'org.zenframework.z8'
-version = '2.0.9'
+version = '2.0.10'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
