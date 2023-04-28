@@ -24,8 +24,7 @@ class ServerPropertiesTask extends DefaultTask {
 		'application.database.connection' : 'jdbc:postgresql://localhost/z8',
 		'application.database.charset' : 'UTF-8',
 
-		'application.email.login' : 'noreply@yourdomain',
-		'application.email.password' : '',
+		'application.name' : 'Z8 App',
 
 		'application.language' : 'ru',
 
@@ -70,7 +69,12 @@ class ServerPropertiesTask extends DefaultTask {
 		'maintenance.job.cron' : '',
 
 		'office.home' : '/path/to/libreoffice',
-		'converter.url' : ''
+		'converter.url' : '',
+
+		'smtp.host': '',
+		'smtp.port': '',
+		'smtp.login': '',
+		'smtp.password': ''
 	]
 
 	@Input def template
