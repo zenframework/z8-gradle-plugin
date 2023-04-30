@@ -71,7 +71,7 @@ class ServerPropertiesTask extends DefaultTask {
 		'office.home' : '/path/to/libreoffice',
 		'converter.url' : '',
 
-		'smtp.config': '../../../smtp.properties',
+		'mail.smtp.config': '../../../smtp.properties',
 	]
 
 	@Input def template
