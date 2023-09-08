@@ -32,9 +32,9 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'web.server.scheme': 'https',
 
-		'web.server.start.application.server' : true,
-		'web.server.start.authority.center' : true,
-		'web.server.start.interconnection.center' : false,
+		'web.server.startApplicationServer' : true,
+		'web.server.startAuthorityCenter' : true,
+		'web.server.startInterconnectionCenter' : false,
 		'web.server.useContainerSession' : true,
 
 		'web.server.cache.enable' : false,
