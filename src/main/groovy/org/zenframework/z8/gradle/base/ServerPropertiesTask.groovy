@@ -41,7 +41,8 @@ class ServerPropertiesTask extends DefaultTask {
 
 		'web.server.sso.authenticator': '',
 
-		'saml.config': '../../conf/onelogin.saml.properties',
+		'oauth.config': '../../conf/oauth/config.json',
+		'saml.config': '../../conf/saml/onelogin.saml.properties',
 
 		'trusted.users.create': false,
 
