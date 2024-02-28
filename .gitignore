@@ -6,6 +6,7 @@
 /.project
 /.classpath
 /gradle.properties
+/.idea
 *.cache
 *-sources.jar
 *-javadoc.jar

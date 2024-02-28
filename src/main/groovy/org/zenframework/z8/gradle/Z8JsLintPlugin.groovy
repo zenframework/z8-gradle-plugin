@@ -13,7 +13,7 @@ class Z8JsLintPlugin implements Plugin<Project> {
 		project.pluginManager.apply(Z8NodeJsPlugin.class)
 
 		project.ext.eslintCmd = Os.isFamily(Os.FAMILY_WINDOWS) ? 'eslint.cmd' : 'eslint'
-		project.ext.jslintModule = 'git+https://git.crazydoctor.org/dz/eslint-plugin-z8.git'
+		project.ext.jslintModule = 'git+https://git.doczilla.pro/CrazyDoctor/eslint-plugin-z8.git'
 
 		project.tasks.register('installJsLint', NpmInstallTask) {
 			group 'z8 build setup'
@@ -25,6 +25,9 @@ class Z8JsLintPlugin implements Plugin<Project> {
 			group 'z8 js'
 			description 'Run JS lint'
 			dependsOn project.tasks.installJsLint
+            if(!project.hasProperty('warn')) {
+                options '--quiet'
+            }
 		}
 
 		project.tasks.register('fixJsLint', RunJsLintTask) {
