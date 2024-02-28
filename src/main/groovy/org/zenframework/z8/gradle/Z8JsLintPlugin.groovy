@@ -25,9 +25,9 @@ class Z8JsLintPlugin implements Plugin<Project> {
 			group 'z8 js'
 			description 'Run JS lint'
 			dependsOn project.tasks.installJsLint
-            if(!project.hasProperty('warn')) {
-                options '--quiet'
-            }
+			if(!project.hasProperty('warn')) {
+				options '--quiet'
+			}
 		}
 
 		project.tasks.register('fixJsLint', RunJsLintTask) {
