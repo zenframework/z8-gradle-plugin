@@ -25,8 +25,8 @@ class ServerPropertiesTask extends DefaultTask {
 		'application.database.charset' : 'UTF-8',
 
 		'application.name' : 'Z8 App',
-
 		'application.language' : 'ru',
+		'application.multitenancy' : false,
 
 		'security.log.enabled': false,
 
