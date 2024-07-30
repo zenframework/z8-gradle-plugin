@@ -13,7 +13,7 @@ class Z8JsLintPlugin implements Plugin<Project> {
 		project.pluginManager.apply(Z8NodeJsPlugin.class)
 
 		project.ext.eslintCmd = Os.isFamily(Os.FAMILY_WINDOWS) ? 'eslint.cmd' : 'eslint'
-		project.ext.jslintModule = 'git+https://git.doczilla.pro/CrazyDoctor/eslint-plugin-z8.git'
+		project.ext.jslintModule = 'git+' + (project.hasProperty('gradle.jslinter.url') ? project['gradle.jslinter.url'] : 'https://git.doczilla.pro/CrazyDoctor/eslint-plugin-z8.git')
 
 		project.tasks.register('installJsLint', NpmInstallTask) {
 			group 'z8 build setup'
