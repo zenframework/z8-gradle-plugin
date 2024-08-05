@@ -57,7 +57,7 @@ gradlePlugin {
 }
 
 group = 'org.zenframework.z8'
-version = '2.0.16'
+version = '2.0.17'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

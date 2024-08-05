@@ -15,7 +15,7 @@ class MinifyCssTask extends JavaExec {
 	@Override
 	public Task configure(Closure closure) {
 		classpath = project.configurations.jstools
-		main = 'com.yahoo.platform.yui.compressor.Bootstrap'
+		main = 'com.yahoo.platform.yui.compressor.Bootstrap' // TODO: find a new modern CSS minifier/compressor
 		super.configure(closure);
 	}
 

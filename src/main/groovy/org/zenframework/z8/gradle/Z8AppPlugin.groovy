@@ -53,13 +53,19 @@ class Z8AppPlugin implements Plugin<Project> {
 			replaceMatching 'web/**/*.html'
 		}
 
-		project.tasks.register('minifyCss', MinifyCssTask) {
-			group 'build'
+		/* TODO: Return normal minification, as soon as we find a modern CSS minifier/compressor */
+		project.tasks.register('minifyCss', /*MinifyCssTask*/Copy) {
+			/*group 'build'
 			description 'Minify CSS files'
 			source = project.tasks.concatCss.output
 			output = project.file("${project.buildDir}/web/css/${project.name}.css")
 			doLast {
 				project.ant.replaceregexp(file: output.get(), match: '(calc\\([\\d|\\.]+[^+]*)(\\+)', replace: '\\1 \\2 ', flags: 'g')
+			}*/
+			from project.tasks.concatCss.output
+			into project.file("${project.buildDir}/web/css")
+			rename { fileName ->
+				"${project.name}.css"
 			}
 		}
 
