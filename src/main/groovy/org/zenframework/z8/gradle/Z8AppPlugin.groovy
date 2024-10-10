@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.Copy
+import org.zenframework.z8.gradle.base.BuildPropertiesTask
 import org.zenframework.z8.gradle.base.CollectResourcesTask
 import org.zenframework.z8.gradle.base.ServerPropertiesTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
@@ -84,7 +85,7 @@ class Z8AppPlugin implements Plugin<Project> {
 			requires project.configurations.blcompile
 			requiresInclude 'WEB-INF/**/*'
 			// TODO Remove later
-			requiresExclude 'WEB-INF/project.xml', 'WEB-INF/server.properties'
+			requiresExclude 'WEB-INF/project.xml', 'WEB-INF/server.properties', 'WEB-INF/build.properties'
 
 			into "${project.buildDir}/web"
 		}
@@ -101,6 +102,12 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/WEB-INF/server.properties")
 			template = 'WEB-INF/server.properties'
 			customTemplate = 'WEB-INF/server.properties.custom'
+		}
+
+		project.tasks.register('buildProperties', BuildPropertiesTask) {
+			description 'Generate build.properties'
+
+			output = project.file("${project.buildDir}/web/WEB-INF/build.properties")
 		}
 
 		project.tasks.register('collectProjectDebugResources', Copy) {
@@ -135,7 +142,8 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('assembleWeb') {
 			group 'Build'
 			description 'Assemble WEB resources'
-			dependsOn project.tasks.minifyCss, project.tasks.minifyJs, project.tasks.serverProperties,
+			dependsOn project.tasks.minifyCss, project.tasks.minifyJs,
+					project.tasks.serverProperties, project.tasks.buildProperties,
 					project.tasks.collectProjectDebugResources, project.tasks.collectProjectResources,
 					project.tasks.collectDependantWebinfResources, project.tasks.collectDistributionResources,
 					project.tasks.jstDependencies
