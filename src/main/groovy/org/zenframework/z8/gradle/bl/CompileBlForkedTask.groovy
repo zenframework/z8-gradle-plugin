@@ -36,10 +36,7 @@ abstract class CompileBlForkedTask extends JavaExec {
 		super.configure(closure);
 
 		requires.setFrom(project.configurations.blcompile)
-		sources.setFrom(sources.plus(project.files(sourcePaths.get().collect { project.file("${project.projectDir}/${it}") }.toArray())))
-
-		classpath = project.configurations.compiler
-		main = 'org.zenframework.z8.compiler.cmd.Main'
+		sources.setFrom(sources.plus(project.files(sourcePaths.get().collect { project.file(it) }.toArray())))
 	}
 
 	@TaskAction

@@ -35,9 +35,11 @@ class Z8AppPlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
-			boot "org.zenframework.z8:org.zenframework.z8.boot:${project.z8Version}"
-			resources "org.zenframework.z8:org.zenframework.z8.resources:${project.z8Version}@zip"
+			boot "org.zenframework.z8:org.zenframework.z8.boot"
+			resources "org.zenframework.z8:org.zenframework.z8.resources"
 		}
+
+		project.ext.z8BootLib = project.configurations.boot.singleFile.name
 
 		project.sourceSets.main.resources.srcDirs "${project.srcMainDir}/resources"
 

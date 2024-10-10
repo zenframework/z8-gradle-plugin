@@ -8,12 +8,8 @@ import org.gradle.api.artifacts.component.ModuleComponentSelector
 
 class Z8BasePlugin implements Plugin<Project> {
 
-	static final String Z8_DEFAULT_VERSION = '2.0'
-
 	@Override
 	void apply(Project project) {
-		if (!project.hasProperty('z8Version'))
-			project.ext.z8Version = Z8_DEFAULT_VERSION
 		if (!project.hasProperty('srcMainDir'))
 			project.ext.srcMainDir = project.file("${project.projectDir}/src/main")
 		if (!project.hasProperty('resolveGroups'))

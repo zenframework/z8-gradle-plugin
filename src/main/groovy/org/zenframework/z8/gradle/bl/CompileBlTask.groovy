@@ -17,10 +17,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.FileChange
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
-import org.zenframework.z8.compiler.cmd.Main
-import org.zenframework.z8.compiler.workspace.ProjectProperties
-import org.zenframework.z8.gradle.base.ArtifactDependentTask
-import org.zenframework.z8.gradle.util.Z8GradleUtil
+//import org.zenframework.z8.compiler.cmd.Main
+//import org.zenframework.z8.compiler.workspace.ProjectProperties
+//import org.zenframework.z8.gradle.base.ArtifactDependentTask
+//import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 abstract class CompileBlTask extends DefaultTask {
 
@@ -47,7 +47,7 @@ abstract class CompileBlTask extends DefaultTask {
 
 	@TaskAction
 	def run(InputChanges inputChanges) {
-		ProjectProperties properties = new ProjectProperties(project.projectDir.path)
+/*		ProjectProperties properties = new ProjectProperties(project.projectDir.path)
 		properties.load()
 
 		def sourcePaths = sourcePaths.get()
@@ -67,7 +67,7 @@ abstract class CompileBlTask extends DefaultTask {
 		if (docsOutput != null)
 			properties.docsPath = docsOutput
 	
-		Main.compile(properties);
+		Main.compile(properties);*/
 	}
 
 }

@@ -5,7 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.zenframework.z8.gradle.bl.CompileBlTask
+import org.zenframework.z8.gradle.bl.CompileBlForkedTask
 
 class Z8BlBasePlugin implements Plugin<Project> {
 
@@ -26,18 +26,20 @@ class Z8BlBasePlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
-			compiler "org.zenframework.z8:org.zenframework.z8.compiler:${project.z8Version}"
+			compiler ("org.zenframework.z8:org.zenframework.z8.compiler") { transitive = true }
 
-			compile "org.zenframework.z8:org.zenframework.z8.server:${project.z8Version}"
-			compile "org.zenframework.z8:org.zenframework.z8.lang:${project.z8Version}"
+			compile "org.zenframework.z8:org.zenframework.z8.server"
+			compile "org.zenframework.z8:org.zenframework.z8.lang"
 
-			blcompile "org.zenframework.z8:org.zenframework.z8.lang:${project.z8Version}@zip"
-			blcompile "org.zenframework.z8:org.zenframework.z8.server:${project.z8Version}@zip"
+			blcompile "org.zenframework.z8:org.zenframework.z8.lang"
+			blcompile "org.zenframework.z8:org.zenframework.z8.server"
 		}
 
-		project.tasks.register('compileBl', CompileBlTask) {
+		project.tasks.register('compileBl', CompileBlForkedTask) {
 			group 'build'
 			description 'Compile BL sources'
+			classpath = project.configurations.compiler
+			main = 'org.zenframework.z8.compiler.cmd.Main'
 			sourcePaths = [
 				"${project.srcMainDir}/bl",
 				"${project.projectDir}/WEB-INF/resources",

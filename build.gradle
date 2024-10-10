@@ -9,12 +9,6 @@ repositories {
 	maven { url 'http://mvn.revoltsoft.ru/' }
 }
 
-ext.z8Version = '2.0'
-
-dependencies {
-	compile ("org.zenframework.z8:org.zenframework.z8.compiler:${z8Version}") { transitive = true }
-}
-
 gradlePlugin {
 	plugins {
 		z8BasePlugin {
@@ -57,7 +51,7 @@ gradlePlugin {
 }
 
 group = 'org.zenframework.z8'
-version = '2.0.17'
+version = '2.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
