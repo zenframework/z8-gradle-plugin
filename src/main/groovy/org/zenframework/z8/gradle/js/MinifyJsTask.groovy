@@ -33,7 +33,7 @@ class MinifyJsTask extends JavaExec {
 		def languageIn = languageIn.getOrNull()
 		def languageOut = languageOut.getOrNull()
 
-		def argsList = [ '--rewrite_polyfills', 'false' ]
+		def argsList = [ '--rewrite_polyfills', 'false', '--strict_mode_input', 'false' ]
 		if (warningLevel != null)
 			argsList.addAll([ '--warning_level', warningLevel ])
 		if (languageIn != null)

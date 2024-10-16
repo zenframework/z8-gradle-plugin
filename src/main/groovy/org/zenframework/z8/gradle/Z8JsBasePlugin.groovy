@@ -27,8 +27,8 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
-			jstools 'org.zenframework.z8.dependencies.minimizers:closure:3.0'
-			jstools 'org.zenframework.z8.dependencies.minimizers:yuicompressor:3.0'
+			jstools 'org.zenframework.z8.dependencies.tools:closure-compiler-v20180805:4.0'
+			jstools 'org.zenframework.z8.dependencies.tools:yuicompressor:4.0'
 		}
 
 		project.tasks.register('compileSass', CompileSassTask) {

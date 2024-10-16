@@ -75,6 +75,7 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('minifyJs', MinifyJsTask) {
 			group 'build'
 			description 'Minify JS files'
+			languageOut = 'ECMASCRIPT_2017'
 			source = project.tasks.concatJs.output
 			output = project.file("${project.buildDir}/web/${project.name}.js")
 		}
