@@ -21,8 +21,15 @@ class BuildPropertiesTask extends DefaultTask {
 
 	@TaskAction
 	def run() {
-		def data = ["${project.name}.version=${project.version}"] + project.subprojects.collect { "${it.name}.version=${it.version}" }.sort()
+		def data = ["${project.name}.version=${project.version}"]
+
+		// Zenframework Z8 version
+		data += project.configurations.boot.resolvedConfiguration.resolvedArtifacts.collect {
+			"${it.moduleVersion.id.group}.version=${it.moduleVersion.id.version}"
+		}
+
+		data += project.subprojects.collect { "${it.name}.version=${it.version}" }.sort()
+
 		output.asFile.get().text = data.join('\n')
 	}
-
 }

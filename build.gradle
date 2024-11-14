@@ -51,7 +51,7 @@ gradlePlugin {
 }
 
 group = 'org.zenframework.z8'
-version = '2.1.1'
+version = '2.1.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -77,7 +77,7 @@ eclipse {
 publishing {
 	repositories {
 		mavenLocal()
-		if (project.hasProperty('mavenPublishRemote') && mavenPublishRemote) {
+		if (project.hasProperty('mavenPublishRemote') && project.mavenPublishRemote) {
 			maven {
 				url = "sftp://revoltsoft.ru:22/opt/mvn"
 				credentials {
