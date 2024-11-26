@@ -36,6 +36,9 @@ class Z8AppPlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
+			z8 "org.zenframework.z8:org.zenframework.z8.compiler"
+			z8 "org.zenframework.z8:org.zenframework.z8.server"
+			z8 "org.zenframework.z8:org.zenframework.z8.js"
 			boot "org.zenframework.z8:org.zenframework.z8.boot"
 			resources "org.zenframework.z8:org.zenframework.z8.resources"
 		}
@@ -107,7 +110,7 @@ class Z8AppPlugin implements Plugin<Project> {
 
 		project.tasks.register('buildProperties', BuildPropertiesTask) {
 			description 'Generate build.properties'
-
+			additionalConfiguration project.configurations.z8
 			output = project.file("${project.buildDir}/web/WEB-INF/build.properties")
 		}
 

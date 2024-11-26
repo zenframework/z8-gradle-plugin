@@ -15,6 +15,10 @@ class Z8BasePlugin implements Plugin<Project> {
 		if (!project.hasProperty('resolveGroups'))
 			project.ext.resolveGroups = [ project.group ]
 
+		project.configurations {
+			z8
+		}
+
 		project.configurations.all {
 			resolutionStrategy.dependencySubstitution.all { DependencySubstitution dependency ->
 				if (dependency.requested instanceof ModuleComponentSelector) {
