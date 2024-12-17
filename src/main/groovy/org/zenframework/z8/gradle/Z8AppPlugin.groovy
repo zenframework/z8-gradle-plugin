@@ -19,6 +19,9 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.pluginManager.apply(Z8BlBasePlugin.class)
 		project.pluginManager.apply(Z8JsBasePlugin.class)
 
+		if (!project.hasProperty('z8DependenciesVersion'))
+			project.allprojects.ext.z8DependenciesVersion = '4.1'
+
 		project.configurations {
 			boot
 			resources {
