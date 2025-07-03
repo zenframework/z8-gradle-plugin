@@ -59,6 +59,15 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/${project.name}.js")
 		}
 
+		project.tasks.register('concatTestJs', ConcatTask) {
+			group 'Build'
+			description 'Concat JS test files'
+			requires project.configurations.webcompile
+			// Closure allows setting non-existing file
+			source = { project.file("${project.srcTestDir}/js").with { it.exists() ? it : null } }.call()
+			output = project.file("${project.buildDir}/web/${project.name}.test.js")
+		}
+
 		project.tasks.register('collectDependantJsResources', CollectResourcesTask) {
 			requires project.configurations.webcompile
 			requiresExclude '**/*.css', '**/*.js'
@@ -82,7 +91,7 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		project.tasks.register('assembleJs') {
 			group 'Build'
 			description 'Assemble JS/CSS & web resources'
-			dependsOn project.tasks.concatCss, project.tasks.concatJs, project.tasks.collectJsResources
+			dependsOn project.tasks.concatCss, project.tasks.concatJs, project.tasks.concatTestJs, project.tasks.collectJsResources
 		}
 	}
 

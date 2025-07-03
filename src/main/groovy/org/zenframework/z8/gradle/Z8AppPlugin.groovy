@@ -58,6 +58,10 @@ class Z8AppPlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/web/debug/${project.name}.js")
 		}
 
+		project.tasks.concatTestJs {
+			output = project.file("${project.buildDir}/web/debug/${project.name}.test.js")
+		}
+
 		project.tasks.collectDependantJsResources {
 			replaceMatching 'web/**/*.html'
 		}

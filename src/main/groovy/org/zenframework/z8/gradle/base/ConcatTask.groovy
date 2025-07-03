@@ -27,11 +27,19 @@ class ConcatTask extends ArtifactDependentTask {
 
 	@TaskAction
 	def run() {
-		def extractedRequires = extractRequires();
+		def extractedRequires = extractRequires()
 		def source = this.source.asFile.getOrNull()
 
 		def src = requiresInclude.collect { requirement ->
-			extractedRequires.matching { include requirement }.singleFile
+			def found = extractedRequires.matching { include requirement }
+			def count = found.size()
+
+			if (count == 0)
+				project.logger.warn "Requirement '${requirement}' not found. Skipping"
+			if (count > 1)
+				project.logger.warn "Multiple requirements '${requirement}' found. Skipping"
+
+			found.singleFile
 		}
 
 		beforeSource.findAll { it.exists() }.each { file ->
@@ -49,9 +57,9 @@ class ConcatTask extends ArtifactDependentTask {
 					project.file("${source.path}/${it}")
 				})
 			else
-				project.logger.info "Source buildorder ${buildorder} doesn't exist. Skipping"
+				project.logger.info "Source buildorder ${buildorder.absolutePath} doesn't exist. Skipping"
 		} else {
-			project.logger.info "Source ${this.source.asFile} doesn't exist. Skipping"
+			project.logger.info "Source ${source != null ? source.absolutePath : null} doesn't exist. Skipping"
 		}
 
 		afterSource.findAll { it.exists() }.each { file ->
