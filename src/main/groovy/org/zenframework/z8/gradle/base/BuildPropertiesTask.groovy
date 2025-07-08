@@ -12,7 +12,7 @@ import org.gradle.api.tasks.TaskAction
 class BuildPropertiesTask extends DefaultTask {
 
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
-	final additionalArtifacts = []
+	private final additionalArtifacts = []
 
 	public additionalConfiguration(Configuration... additionalConfigurations) {
 		for (Configuration conf : additionalConfigurations)
