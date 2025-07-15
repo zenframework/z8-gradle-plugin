@@ -43,7 +43,7 @@ class Z8JsBasePlugin implements Plugin<Project> {
 		project.tasks.register('embedSvg', EmbedSvgTask) {
 			group 'build'
 			description 'Embed SVG into CSS file'
-			source.from project.file("${project.srcMainDir}/css/svg").with { it.exists() ? project.fileTree(it) : null }
+			source.from project.file("${project.srcMainDir}/css/svg").with { it.exists() ? it : null }
 			output = project.file("${project.buildDir}/tmp/${project.name}.svg.css")
 		}
 

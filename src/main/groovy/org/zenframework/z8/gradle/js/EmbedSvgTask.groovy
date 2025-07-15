@@ -19,21 +19,10 @@ class EmbedSvgTask extends ArtifactDependentTask {
 
     @SkipWhenEmpty @InputDirectory final ConfigurableFileTree source = project.objects.fileTree()
     @OutputFile final RegularFileProperty output = project.objects.fileProperty()
-    @Optional @Input final Property<String> prefix = project.objects.property(String.class)
 
     @TaskAction
     def run() {
         new FileWriter(this.output.asFile.get()).withCloseable { fw ->
-            fw.write(this.prefix.getOrElse("""
-[class*='${project.name}-icon-'] {
-  width: 16px;
-  height: 16px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-"""))
-
             def db = DocumentBuilderFactory.newInstance().newDocumentBuilder()
             def transformer = TransformerFactory.newInstance().newTransformer()
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
@@ -44,7 +33,7 @@ class EmbedSvgTask extends ArtifactDependentTask {
                     def name = IntStream.range(0, f.nameCount)
                             .mapToObj { f.getName(it).toString() }
                             .collect(Collectors.joining("-"))
-                        .with { it.substring(0, it.length() - 4) } // убрать .svg
+                            .with { it.substring(0, it.length() - 4) } // убрать .svg
                     fw.write(".${project.name}-icon-${name} {\n")
                     fw.write("    background-image: url('data:image/svg+xml,")
 
