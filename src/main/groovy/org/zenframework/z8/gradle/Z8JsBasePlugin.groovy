@@ -8,6 +8,7 @@ import org.gradle.api.tasks.Copy
 import org.zenframework.z8.gradle.base.CollectResourcesTask
 import org.zenframework.z8.gradle.base.ConcatTask
 import org.zenframework.z8.gradle.js.CompileSassTask
+import org.zenframework.z8.gradle.js.EmbedSvgTask
 
 class Z8JsBasePlugin implements Plugin<Project> {
 
@@ -39,12 +40,21 @@ class Z8JsBasePlugin implements Plugin<Project> {
 			output = project.file("${project.buildDir}/tmp/${project.name}.sass.css")
 		}
 
+		project.tasks.register('embedSvg', EmbedSvgTask) {
+			group 'build'
+			description 'Embed SVG into CSS file'
+			source.from project.file("${project.srcMainDir}/css/svg").with { it.exists() ? it : null }
+			output = project.file("${project.buildDir}/tmp/${project.name}.svg.css")
+		}
+
 		project.tasks.register('concatCss', ConcatTask) {
 			group 'Build'
 			description 'Concat CSS files'
 			dependsOn project.tasks.compileSass
+			dependsOn project.tasks.embedSvg
 			requires project.configurations.webcompile
 			beforeSource "${project.buildDir}/tmp/${project.name}.sass.css"
+			beforeSource "${project.buildDir}/tmp/${project.name}.svg.css"
 			// Closure allows setting non-existing file
 			source = { project.file("${project.srcMainDir}/css").with { it.exists() ? it : null } }.call()
 			output = project.file("${project.buildDir}/web/css/${project.name}.css")
