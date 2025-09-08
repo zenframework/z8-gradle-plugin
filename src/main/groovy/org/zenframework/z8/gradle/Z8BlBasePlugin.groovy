@@ -28,8 +28,8 @@ class Z8BlBasePlugin implements Plugin<Project> {
 		project.dependencies {
 			compiler ("org.zenframework.z8:org.zenframework.z8.compiler") { transitive = true }
 
-			compile "org.zenframework.z8:org.zenframework.z8.server"
-			compile "org.zenframework.z8:org.zenframework.z8.lang"
+			implementation "org.zenframework.z8:org.zenframework.z8.server"
+			implementation "org.zenframework.z8:org.zenframework.z8.lang"
 
 			blcompile "org.zenframework.z8:org.zenframework.z8.lang"
 			blcompile "org.zenframework.z8:org.zenframework.z8.server"
@@ -39,7 +39,7 @@ class Z8BlBasePlugin implements Plugin<Project> {
 			group 'build'
 			description 'Compile BL sources'
 			classpath = project.configurations.compiler
-			main = 'org.zenframework.z8.compiler.cmd.Main'
+			mainClass = 'org.zenframework.z8.compiler.cmd.Main'
 			sourcePaths = [
 				"${project.srcMainDir}/bl",
 				"${project.projectDir}/WEB-INF/resources",

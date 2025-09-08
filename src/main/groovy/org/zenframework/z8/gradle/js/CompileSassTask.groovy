@@ -10,7 +10,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.zenframework.z8.gradle.util.Z8GradleUtil
 
-class CompileSassTask extends Exec {
+abstract class CompileSassTask extends Exec {
 	@Optional @SkipWhenEmpty @InputDirectory final DirectoryProperty source = project.objects.directoryProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
 	@Input String index = 'index.sass'

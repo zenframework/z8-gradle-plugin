@@ -2,6 +2,7 @@ package org.zenframework.z8.gradle.base
 
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 
@@ -24,6 +25,7 @@ class CollectResourcesTask extends ArtifactDependentTask {
 		doLast {
 			project.copy {
 				includeEmptyDirs = false
+				duplicatesStrategy = DuplicatesStrategy.OVERRIDE
 
 				def extracted = extractRequires()
 				if (stripFolders)

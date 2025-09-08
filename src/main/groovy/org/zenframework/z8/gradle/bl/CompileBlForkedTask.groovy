@@ -39,8 +39,9 @@ abstract class CompileBlForkedTask extends JavaExec {
 		sources.setFrom(sources.plus(project.files(sourcePaths.get().collect { project.file(it) }.toArray())))
 	}
 
-	@TaskAction
-	public void exec(InputChanges inputChanges) {
+//	@TaskAction
+	@Override
+	public void exec() {
 		def sourcePaths = sourcePaths.get()
 		def output = Z8GradleUtil.getPath(output)
 		def requires = requires.asFileTree.collect() { it.path }
@@ -48,7 +49,8 @@ abstract class CompileBlForkedTask extends JavaExec {
 		def docsOutput = Z8GradleUtil.getPath(docsOutput)
 
 		args = [ project.projectDir, "-projectName:${project.name}", "-sources:${sourcePaths.join(';')}", "-output:${output}", "-requires:${requires.join(';')}" ] + args
-		exec();
+
+		super.exec();
 	}
 
 }

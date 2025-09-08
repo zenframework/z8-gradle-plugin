@@ -7,15 +7,18 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputFile
 import org.zenframework.z8.gradle.util.Z8GradleUtil
 
-class MinifyCssTask extends JavaExec {
+abstract class MinifyCssTask extends JavaExec {
 
 	@InputFile final RegularFileProperty source = project.objects.fileProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
 
+	public MinifyCssTask() {
+		main = 'com.yahoo.platform.yui.compressor.Bootstrap' // TODO: find a new modern CSS minifier/compressor
+	}
+
 	@Override
 	public Task configure(Closure closure) {
 		classpath = project.configurations.jstools
-		main = 'com.yahoo.platform.yui.compressor.Bootstrap' // TODO: find a new modern CSS minifier/compressor
 		super.configure(closure);
 	}
 

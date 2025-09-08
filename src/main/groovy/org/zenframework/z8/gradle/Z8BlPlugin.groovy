@@ -41,10 +41,10 @@ class Z8BlPlugin implements Plugin<Project> {
 
 		project.tasks.register('assembleBlartifact', Zip) {
 			dependsOn project.tasks.compileBl, project.tasks.collectNls
-			description "Assemble BL archive ${archiveName} into ${project.relativePath(destinationDir)}"
+			description "Assemble BL archive ${archiveFileName} into ${project.relativePath(destinationDirectory)}"
 
-			archiveName "${project.name}-${project.version}.blar"
-			destinationDir project.file("${project.buildDir}/libs")
+			archiveFileName = "${project.name}-${project.version}.blar"
+			destinationDirectory = project.file("${project.buildDir}/libs")
 
 			for (File sourcePath : project.tasks.compileBl.sources) {
 				from(sourcePath) {
@@ -67,7 +67,7 @@ class Z8BlPlugin implements Plugin<Project> {
 			}
 		}
 
-		project.artifacts.add('blartifact', project.tasks.assembleBlartifact.archivePath) {
+		project.artifacts.add('blartifact', project.tasks.assembleBlartifact.archiveFile) {
 			type 'blar'
 			builtBy project.tasks.assembleBlartifact
 		}

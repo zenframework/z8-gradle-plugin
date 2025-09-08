@@ -1,6 +1,7 @@
 package org.zenframework.z8.gradle.js
 
 import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile

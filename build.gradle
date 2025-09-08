@@ -6,7 +6,7 @@ plugins {
 
 repositories {
 	mavenLocal()
-	maven { url 'http://mvn.revoltsoft.ru/' }
+	maven { url 'https://mvn.revoltsoft.ru/' }
 }
 
 gradlePlugin {
@@ -51,15 +51,19 @@ gradlePlugin {
 }
 
 group = 'org.zenframework.z8'
-version = '2.1.9'
+version = '3.0.0'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+	sourceCompatibility = 17
+	targetCompatibility = 17
+}
 
 buildDir = './target'
 
-sourceSets.main.java.outputDir = file("${buildDir}/classes/main")
+sourceSets.main.java.destinationDirectory = file("${buildDir}/classes/main")
 sourceSets.main.output.resourcesDir = file("${buildDir}/classes/main")
+
+compileJava.dependsOn processResources
 
 eclipse {
 	// Eclipse: default java output -> $buildDir/classes/default
@@ -77,6 +81,7 @@ eclipse {
 publishing {
 	repositories {
 		mavenLocal()
+/*
 		if (project.hasProperty('mavenPublishRemote') && project.mavenPublishRemote) {
 			maven {
 				url = "sftp://revoltsoft.ru:22/opt/mvn"
@@ -86,6 +91,7 @@ publishing {
 				}
 			}
 		}
+*/
 	}
 	publications {
 		maven(MavenPublication) {

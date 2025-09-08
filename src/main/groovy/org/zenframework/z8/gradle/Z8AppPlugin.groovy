@@ -139,6 +139,7 @@ class Z8AppPlugin implements Plugin<Project> {
 
 		project.tasks.register('collectDistributionResources', CollectResourcesTask) {
 			description 'Collect application resources'
+			dependsOn project.tasks.collectProjectDebugResources
 
 			requires project.configurations.resources
 			requiresInclude 'bin/**/*', 'conf/**/*'

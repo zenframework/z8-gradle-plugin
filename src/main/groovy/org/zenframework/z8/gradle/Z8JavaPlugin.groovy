@@ -2,7 +2,7 @@ package org.zenframework.z8.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.publish.maven.MavenPublication
 
 class Z8JavaPlugin implements Plugin<Project> {
@@ -10,15 +10,16 @@ class Z8JavaPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 		project.pluginManager.apply(Z8BasePlugin.class)
-		project.pluginManager.apply(JavaPlugin.class)
+		project.pluginManager.apply(JavaLibraryPlugin.class)
 
 		project.sourceSets {
 			main {
-				java.outputDir = project.file("${project.buildDir}/classes/main")
-				resources.outputDir = project.file("${project.buildDir}/classes/main")
+				java.destinationDirectory = project.file("${project.buildDir}/classes/main")
 				output.resourcesDir = project.file("${project.buildDir}/classes/main")
 			}
 		}
+
+		project.tasks.compileJava.dependsOn project.tasks.processResources
 
 		project.tasks.jar.duplicatesStrategy = 'exclude'
 

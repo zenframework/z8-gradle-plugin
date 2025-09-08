@@ -23,11 +23,11 @@ class Z8JsPlugin implements Plugin<Project> {
 
 		project.tasks.register('assembleWebartifact', Zip) {
 			group 'Build'
-			description "Assemble JS/CSS archive ${archiveName} into ${project.relativePath(destinationDir)}"
+			description "Assemble JS/CSS archive ${archiveFileName} into ${project.relativePath(destinationDirectory)}"
 			dependsOn project.tasks.assembleJs
 
-			archiveName "${project.name}-${project.version}.jsar"
-			destinationDir project.file("${project.buildDir}/libs")
+			archiveFileName = "${project.name}-${project.version}.jsar"
+			destinationDirectory = project.file("${project.buildDir}/libs")
 
 			from(project.buildDir) {
 				include 'web/**/*'
@@ -38,7 +38,7 @@ class Z8JsPlugin implements Plugin<Project> {
 
 		project.tasks.assemble.dependsOn project.tasks.assembleWebartifact
 
-		project.artifacts.add('webartifact', project.tasks.assembleWebartifact.archivePath) {
+		project.artifacts.add('webartifact', project.tasks.assembleWebartifact.archiveFile) {
 			type 'jsar'
 			builtBy project.tasks.assembleWebartifact
 		}

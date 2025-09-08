@@ -10,7 +10,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.zenframework.z8.gradle.util.Z8GradleUtil
 
-class MinifyJsTask extends JavaExec {
+abstract class MinifyJsTask extends JavaExec {
 
 	@InputFile final RegularFileProperty source = project.objects.fileProperty()
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
@@ -18,10 +18,13 @@ class MinifyJsTask extends JavaExec {
 	@Optional @Input final Property<String> languageIn = project.objects.property(String)
 	@Optional @Input final Property<String> languageOut = project.objects.property(String)
 
+	public MinifyJsTask() {
+		mainClass = 'com.google.javascript.jscomp.CommandLineRunner'
+	}
+
 	@Override
 	public Task configure(Closure closure) {
 		classpath = project.configurations.jstools
-		main = 'com.google.javascript.jscomp.CommandLineRunner'
 		super.configure(closure);
 	}
 

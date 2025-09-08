@@ -6,7 +6,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Input
 
-class RunJsLintTask extends Exec {
+abstract class RunJsLintTask extends Exec {
 	@Input String mask = '**/*.js'
 	@Input ListProperty<String> options = project.objects.listProperty(String.class) 
 
