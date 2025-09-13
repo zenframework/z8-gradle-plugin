@@ -70,9 +70,13 @@ class Z8AppPlugin implements Plugin<Project> {
 
 		/* TODO: Return normal minification, as soon as we find a modern CSS minifier/compressor */
 		project.tasks.register('minifyCss', /*MinifyCssTask*/Copy) {
-			/*group 'build'
+			group 'build'
 			description 'Minify CSS files'
-			source = project.tasks.concatCss.output
+			dependsOn project.tasks.collectDistributionResources, project.tasks.collectProjectResources,
+					project.tasks.collectDependantJsResources, project.tasks.collectProjectJsResources,
+					project.tasks.collectDependantWebinfResources, project.tasks.collectProjectDebugResources
+
+			/*source = project.tasks.concatCss.output
 			output = project.file("${project.buildDir}/web/css/${project.name}.css")
 			doLast {
 				project.ant.replaceregexp(file: output.get(), match: '(calc\\([\\d|\\.]+[^+]*)(\\+)', replace: '\\1 \\2 ', flags: 'g')
@@ -87,6 +91,10 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.tasks.register('minifyJs', MinifyJsTask) {
 			group 'build'
 			description 'Minify JS files'
+			dependsOn project.tasks.collectDistributionResources, project.tasks.collectProjectResources,
+					project.tasks.collectDependantJsResources, project.tasks.collectProjectJsResources,
+					project.tasks.collectDependantWebinfResources, project.tasks.collectProjectDebugResources
+
 			languageOut = 'ECMASCRIPT_2017'
 			source = project.tasks.concatJs.output
 			output = project.file("${project.buildDir}/web/${project.name}.js")
@@ -125,7 +133,8 @@ class Z8AppPlugin implements Plugin<Project> {
 
 		project.tasks.register('collectProjectDebugResources', Copy) {
 			description 'Collect WEB debug resources'
-			dependsOn project.tasks.collectJsResources
+			dependsOn project.tasks.collectJsResources, project.tasks.collectProjectResources,
+					project.tasks.collectDependantWebinfResources
 
 			from("${project.buildDir}/web") {
 				include 'css/**/*'

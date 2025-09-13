@@ -25,7 +25,7 @@ class CollectResourcesTask extends ArtifactDependentTask {
 		doLast {
 			project.copy {
 				includeEmptyDirs = false
-				duplicatesStrategy = DuplicatesStrategy.OVERRIDE
+				duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
 				def extracted = extractRequires()
 				if (stripFolders)
