@@ -81,7 +81,6 @@ eclipse {
 publishing {
 	repositories {
 		mavenLocal()
-/*
 		if (project.hasProperty('mavenPublishRemote') && project.mavenPublishRemote) {
 			maven {
 				url = "sftp://revoltsoft.ru:22/opt/mvn"
@@ -91,7 +90,6 @@ publishing {
 				}
 			}
 		}
-*/
 	}
 	publications {
 		maven(MavenPublication) {
