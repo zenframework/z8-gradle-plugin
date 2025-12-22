@@ -2,10 +2,7 @@ package org.zenframework.z8.gradle.js
 
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.SkipWhenEmpty
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.zenframework.z8.gradle.base.ArtifactDependentTask
 
 import javax.xml.parsers.DocumentBuilderFactory
@@ -19,7 +16,8 @@ import java.util.stream.IntStream
 
 class EmbedSvgTask extends ArtifactDependentTask {
 
-	@SkipWhenEmpty @InputDirectory final ConfigurableFileTree source = project.objects.fileTree()
+	@SkipWhenEmpty @InputFiles final ConfigurableFileTree source = project.objects.fileTree()
+	@Optional @Input String prefix = project.name.replace('.', '-')
 	@OutputFile final RegularFileProperty output = project.objects.fileProperty()
 
 	@TaskAction
@@ -36,7 +34,7 @@ class EmbedSvgTask extends ArtifactDependentTask {
 							.mapToObj { f.getName(it).toString() }
 							.collect(Collectors.joining("-"))
 							.with { it.substring(0, it.length() - 4) } // убрать .svg
-					fw.write(".${project.name}-icon-${name} {\n")
+					fw.write(".$prefix-icon-$name {\n")
 					fw.write("	background-image: url('data:image/svg+xml,")
 
 					def document = db.parse(source)
