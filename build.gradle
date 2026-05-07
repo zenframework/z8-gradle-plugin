@@ -51,7 +51,7 @@ gradlePlugin {
 }
 
 group = 'org.zenframework.z8'
-version = '2.1.12'
+version = '2.1.13'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -80,10 +80,10 @@ publishing {
 /*
 		if (project.hasProperty('mavenPublishRemote') && project.mavenPublishRemote) {
 			maven {
-				url = "sftp://zenframework.org:22/opt/mvn"
+				url = "sftp://10.0.26.1:22/opt/www/mvn"
 				credentials {
-					username revoltUser
-					password revoltPassword
+					username sftpUser
+					password sftpPassword
 				}
 			}
 		}
