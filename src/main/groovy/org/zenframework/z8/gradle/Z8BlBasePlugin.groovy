@@ -6,6 +6,7 @@ import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.zenframework.z8.gradle.bl.CompileBlForkedTask
+import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8BlBasePlugin implements Plugin<Project> {
 
@@ -26,13 +27,13 @@ class Z8BlBasePlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
-			compiler ("org.zenframework.z8:org.zenframework.z8.compiler") { transitive = true }
+			compiler (Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.compiler', project.z8Version)) { transitive = true }
 
-			compile "org.zenframework.z8:org.zenframework.z8.server"
-			compile "org.zenframework.z8:org.zenframework.z8.lang"
+			compile Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.server', project.z8Version)
+			compile Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.lang', project.z8Version)
 
-			blcompile "org.zenframework.z8:org.zenframework.z8.lang"
-			blcompile "org.zenframework.z8:org.zenframework.z8.server"
+			blcompile Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.lang', project.z8Version, 'blar')
+			blcompile Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.server', project.z8Version, 'blar')
 		}
 
 		project.tasks.register('compileBl', CompileBlForkedTask) {
