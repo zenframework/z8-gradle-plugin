@@ -57,4 +57,14 @@ class Z8GradleUtil {
 		String ext = extPos >= 0 ? file.name.substring(extPos + 1).toLowerCase() : ''
 		return Archives.contains(ext)
 	}
+
+	public static String verSafe(String artifact, String... specifiers) {
+		String version = specifiers != null && specifiers.length > 0 ? specifiers[0] : null
+		String variant = specifiers != null && specifiers.length > 1 ? specifiers[1] : null
+
+		if (version == null || version.isEmpty())
+			return artifact
+
+		return artifact + ':' + version + (variant != null && !variant.isEmpty() ? '@' + variant : '')
+	}
 }

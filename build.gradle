@@ -6,7 +6,7 @@ plugins {
 
 repositories {
 	mavenLocal()
-	maven { url 'https://mvn.revoltsoft.ru/' }
+	maven { url 'http://mvn.revoltsoft.ru/' }
 }
 
 gradlePlugin {
@@ -51,7 +51,7 @@ gradlePlugin {
 }
 
 group = 'org.zenframework.z8'
-version = '3.0.0'
+version = '3.0.14'
 
 java {
 	sourceCompatibility = 17
@@ -81,15 +81,17 @@ eclipse {
 publishing {
 	repositories {
 		mavenLocal()
+/*
 		if (project.hasProperty('mavenPublishRemote') && project.mavenPublishRemote) {
 			maven {
-				url = "sftp://revoltsoft.ru:22/opt/mvn"
+				url = "sftp://10.0.26.1:22/opt/www/mvn"
 				credentials {
-					username revoltUser
-					password revoltPassword
+					username sftpUser
+					password sftpPassword
 				}
 			}
 		}
+*/
 	}
 	publications {
 		maven(MavenPublication) {

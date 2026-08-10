@@ -10,6 +10,7 @@ import org.zenframework.z8.gradle.base.CollectResourcesTask
 import org.zenframework.z8.gradle.base.ServerPropertiesTask
 import org.zenframework.z8.gradle.js.MinifyCssTask
 import org.zenframework.z8.gradle.js.MinifyJsTask
+import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8AppPlugin implements Plugin<Project> {
 
@@ -18,9 +19,6 @@ class Z8AppPlugin implements Plugin<Project> {
 		project.pluginManager.apply(ApplicationPlugin.class)
 		project.pluginManager.apply(Z8BlBasePlugin.class)
 		project.pluginManager.apply(Z8JsBasePlugin.class)
-
-		if (!project.hasProperty('z8DependenciesVersion'))
-			project.allprojects.ext.z8DependenciesVersion = '4.1'
 
 		project.ext.buildTimestamp = new Date().time
 
@@ -41,11 +39,11 @@ class Z8AppPlugin implements Plugin<Project> {
 		}
 
 		project.dependencies {
-			z8 "org.zenframework.z8:org.zenframework.z8.compiler"
-			z8 "org.zenframework.z8:org.zenframework.z8.server"
-			z8 "org.zenframework.z8:org.zenframework.z8.js"
-			boot "org.zenframework.z8:org.zenframework.z8.boot"
-			resources "org.zenframework.z8:org.zenframework.z8.resources"
+			z8 Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.compiler', project.z8Version)
+			z8 Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.server', project.z8Version)
+			z8 Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.js', project.z8Version, 'jsar')
+			boot Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.boot', project.z8Version)
+			resources Z8GradleUtil.verSafe('org.zenframework.z8:org.zenframework.z8.resources', project.z8Version, 'zip')
 		}
 
 		project.ext.z8BootLib = project.configurations.boot.singleFile.name
@@ -183,5 +181,4 @@ class Z8AppPlugin implements Plugin<Project> {
 			}
 		}
 	}
-
 }

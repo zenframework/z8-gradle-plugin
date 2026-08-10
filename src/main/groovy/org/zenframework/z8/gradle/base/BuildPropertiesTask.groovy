@@ -45,6 +45,33 @@ class BuildPropertiesTask extends DefaultTask {
 	def run() {
 		def modules = project.subprojects.collect { "${it.name}.version=${it.version}" }.sort()
 		def additional = additionalArtifacts.sort()
-		output.asFile.get().text = '# Application\n' + "${project.name}.version=${project.version}" + "\nbuild.timestamp=${project.buildTimestamp}" + '\n\n# Modules\n' + modules.join('\n') + '\n\n# Framework\n' + additional.join('\n')
+		def gitCommit = getGitCommit()
+		def gitBranch = getGitBranch()
+
+		output.asFile.get().text = '# Application\n' +
+				"application.name=${project.name}\n" +
+				"application.version=${project.version}\n" +
+				"build.timestamp=${project.buildTimestamp}\n" +
+				"git.commit=${gitCommit}\n" +
+				"git.branch=${gitBranch}" +
+				'\n\n# Modules\n' + "${project.name}.version=${project.version}\n" + modules.join('\n') +
+				'\n\n# Framework\n' + additional.join('\n')
+	}
+
+	public static String getGitCommit() {
+		return exec('git rev-parse --short HEAD', 'unknown')
+	}
+
+	public static String getGitBranch() {
+		return exec('git rev-parse --abbrev-ref HEAD', 'unknown')
+	}
+
+	public static String exec(String cmd, String defaultValue) {
+		try {
+			def process = cmd.execute()
+			return process.text.trim()
+		} catch (Throwable e) {
+			return defaultValue
+		}
 	}
 }

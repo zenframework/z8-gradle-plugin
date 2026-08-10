@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8BasePlugin implements Plugin<Project> {
 
@@ -18,6 +19,10 @@ class Z8BasePlugin implements Plugin<Project> {
 			project.ext.resolveGroups = [ project.group ]
 		if (!project.hasProperty('z8DependenciesVersion'))
 			project.ext.z8DependenciesVersion = '4.1'
+		if (!project.hasProperty('z8ToolsVersion'))
+			project.ext.z8ToolsVersion = '4.1'
+		if (!project.hasProperty('z8Version'))
+			project.ext.z8Version = null
 	
 		project.configurations {
 			z8
@@ -43,6 +48,10 @@ class Z8BasePlugin implements Plugin<Project> {
 			doLast {
 				println "Z8 Project [${project.name}] sources main dir: ${project.srcMainDir}"
 			}
+		}
+
+		project.ext.verSafe = { String artifact, ...specifiers ->
+			return Z8GradleUtil.verSafe(artifact, *specifiers)
 		}
 	}
 
