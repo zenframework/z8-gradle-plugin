@@ -43,6 +43,12 @@ class Z8JsPlugin implements Plugin<Project> {
 			builtBy project.tasks.assembleWebartifact
 		}
 
+		project.pluginManager.withPlugin('java') {
+			project.components.findByName('java').addVariantsFromConfiguration(project.configurations.webartifact) {
+				it.mapToMavenScope("compile")
+			}
+		}
+
 		project.pluginManager.withPlugin('maven-publish') {
 			project.publishing {
 				repositories { mavenLocal() }

@@ -61,15 +61,15 @@ class Z8BlPlugin implements Plugin<Project> {
 
 		project.tasks.assemble.dependsOn project.tasks.assembleBlartifact
 
-		project.afterEvaluate {
-			project.components.findByName('java').addVariantsFromConfiguration(project.configurations.blartifact) {
-				it.mapToMavenScope("compile")
-			}
-		}
-
 		project.artifacts.add('blartifact', project.tasks.assembleBlartifact.archivePath) {
 			type 'blar'
 			builtBy project.tasks.assembleBlartifact
+		}
+
+		project.pluginManager.withPlugin('java') {
+			project.components.findByName('java').addVariantsFromConfiguration(project.configurations.blartifact) {
+				it.mapToMavenScope("compile")
+			}
 		}
 
 		project.pluginManager.withPlugin('maven-publish') {
