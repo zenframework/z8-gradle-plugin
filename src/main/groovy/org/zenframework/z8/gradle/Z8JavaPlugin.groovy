@@ -41,7 +41,14 @@ class Z8JavaPlugin implements Plugin<Project> {
 			project.publishing {
 				repositories { mavenLocal() }
 				publications {
-					maven(MavenPublication) { from project.components.java }
+					maven(MavenPublication) {
+						from project.components.java
+						// https://docs.gradle.org/6.5.1/userguide/publishing_maven.html#publishing_maven:resolved_dependencies
+						versionMapping {
+							usage('java-api') { fromResolutionOf('runtimeClasspath') }
+							usage('java-runtime') { fromResolutionResult() }
+						}
+					}
 				}
 			}
 		}
