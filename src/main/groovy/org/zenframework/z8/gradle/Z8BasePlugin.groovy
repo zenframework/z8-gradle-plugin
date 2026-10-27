@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySubstitution
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.zenframework.z8.gradle.base.CollectDependenciesTask
 import org.zenframework.z8.gradle.util.Z8GradleUtil
 
 class Z8BasePlugin implements Plugin<Project> {
@@ -48,6 +49,12 @@ class Z8BasePlugin implements Plugin<Project> {
 			doLast {
 				println "Z8 Project [${project.name}] sources main dir: ${project.srcMainDir}"
 			}
+		}
+
+		project.tasks.register('collectDependencies', CollectDependenciesTask) {
+			group 'Build'
+			description 'Collect project dependencies in Maven repository format'
+			output = project.file("${project.buildDir}/dependencies")
 		}
 
 		project.ext.verSafe = { String artifact, ...specifiers ->
