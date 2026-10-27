@@ -29,7 +29,7 @@ class Z8JsBasePlugin implements Plugin<Project> {
 
 		project.dependencies {
 			// TODO Remove tools versions
-			jstools "org.zenframework.z8.dependencies.tools:closure-compiler-v20180805:${project.z8ToolsVersion}"
+			jstools "org.zenframework.z8.dependencies.tools:closure:${project.z8ToolsVersion}"
 			jstools "org.zenframework.z8.dependencies.tools:yuicompressor:${project.z8ToolsVersion}"
 		}
 
