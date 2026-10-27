@@ -54,7 +54,7 @@ class Z8BasePlugin implements Plugin<Project> {
 		project.tasks.register('collectDependencies', CollectDependenciesTask) {
 			group 'Build'
 			description 'Collect project dependencies in Maven repository format'
-			output = project.file("${project.buildDir}/dependencies")
+			output project.file("${project.buildDir}/dependencies")
 		}
 
 		project.ext.verSafe = { String artifact, ...specifiers ->
