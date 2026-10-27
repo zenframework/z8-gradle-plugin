@@ -30,44 +30,44 @@ class CollectDependenciesTask extends DefaultTask {
 	public void exec(InputChanges inputChanges) {
 		Logger logger = getLogger();
 		Set<ModuleComponentIdentifier> componentIds = new HashSet<>();
-		File mavenLocalRepo = output.asFile.getOrNull()
+		File mavenLocalRepo = output.asFile.orNull
 
 		// Collect dependencies IDs
-		for (Configuration config : project.getConfigurations()) {
-			if (!config.isCanBeResolved())
+		for (Configuration config : project.configurations) {
+			if (!config.canBeResolved)
 				continue;
 
 			try {
 				config.getIncoming().getResolutionResult().getAllComponents().forEach { component ->
-					if (component.getId() instanceof ModuleComponentIdentifier)
-						componentIds.add((ModuleComponentIdentifier) component.getId());
+					if (component.id instanceof ModuleComponentIdentifier)
+						componentIds.add((ModuleComponentIdentifier) component.id);
 				}
 			} catch (Exception e) {
-				logger.info("Skipping metadata extraction for configuration: " + config.getName());
+				logger.error("Skipping metadata extraction for configuration: ${config.name}", e);
 			}
 		}
 
-		if (componentIds.isEmpty())
+		if (componentIds.empty)
 			return;
 
 		// Query POMs
-		ArtifactResolutionResult pomQueryResult = project.getDependencies()
+		ArtifactResolutionResult pomQueryResult = project.dependencies
 				.createArtifactResolutionQuery()
 				.forComponents(componentIds)
 				.withArtifacts(MavenModule.class, MavenPomArtifact.class)
 				.execute();
 
-		for (ComponentArtifactsResult component : pomQueryResult.getResolvedComponents()) {
-			if (!(component.getId() instanceof ModuleComponentIdentifier))
+		for (ComponentArtifactsResult component : pomQueryResult.resolvedComponents) {
+			if (!(component.id instanceof ModuleComponentIdentifier))
 				continue;
 
-			ModuleComponentIdentifier id = (ModuleComponentIdentifier) component.getId();
-			File targetDir = getTargetDir(mavenLocalRepo, id.getGroup(), id.getModule(), id.getVersion());
+			ModuleComponentIdentifier id = (ModuleComponentIdentifier) component.id;
+			File targetDir = getTargetDir(mavenLocalRepo, id.group, id.module, id.version);
 
 			component.getArtifacts(MavenPomArtifact.class).forEach { artifactResult ->
 				if (artifactResult instanceof ResolvedArtifactResult)
 					project.copy { spec ->
-						spec.from(((ResolvedArtifactResult) artifactResult).getFile())
+						spec.from(((ResolvedArtifactResult) artifactResult).file)
 						spec.into(targetDir)
 					}
 			}
@@ -75,20 +75,23 @@ class CollectDependenciesTask extends DefaultTask {
 
 		// Copy JARs
 		for (Configuration config : project.getConfigurations()) {
-			if (!config.isCanBeResolved())
+			logger.info("Config: ${config} ${config.canBeResolved ? 'can be resolved' : 'CAN NOT BE RESOLVED'}")
+
+			if (!config.canBeResolved)
 				continue;
 
 			try {
-				config.getResolvedConfiguration().getResolvedArtifacts().forEach { artifact ->
-					var id = artifact.getModuleVersion().getId();
-					File targetDir = getTargetDir(mavenLocalRepo, id.getGroup(), id.getName(), id.getVersion());
+				config.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
+					def id = artifact.moduleVersion.id;
+					File targetDir = getTargetDir(mavenLocalRepo, id.group, id.name, id.version);
+					logger.info("Copy ${artifact.file} to ${targetDir}")
 					project.copy { spec ->
-						spec.from(artifact.getFile())
+						spec.from(artifact.file)
 						spec.into(targetDir)
 					}
 				}
 			} catch (Exception e) {
-				logger.info("Skipping file copy for configuration: " + config.getName());
+				logger.error("Skipping file copy for configuration: ${config.name}", e);
 			}
 		}
 	}
